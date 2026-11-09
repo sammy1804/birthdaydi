@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" role="img" aria-label="Placeholder drawing of Didi's dream house">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3b4649"/>
+      <stop offset="0.6" stop-color="#8d8a6a"/>
+      <stop offset="1" stop-color="#c9ad7e"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#f3d27a" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#f3d27a" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="crescent">
+      <rect width="600" height="600" fill="#fff"/>
+      <circle cx="556" cy="216" r="36" fill="#000"/>
+    </mask>
+  </defs>
+
+  <!-- sky -->
+  <rect width="600" height="600" fill="url(#sky)"/>
+  <circle cx="540" cy="230" r="40" fill="#f3e3b8" mask="url(#crescent)"/>
+
+  <!-- distant hills -->
+  <path d="M0 400 Q120 350 240 392 T480 382 T600 372 V600 H0Z" fill="#5b5f45"/>
+
+  <!-- ground -->
+  <path d="M0 468 Q200 430 360 468 T600 456 V600 H0Z" fill="#4f5a3a"/>
+  <path d="M0 540 Q300 504 600 540 V600 H0Z" fill="#3f4a2e"/>
+
+  <!-- path to the door -->
+  <path d="M290 478 L226 600 L374 600 L310 478 Z" fill="#e4d3ae" opacity="0.9"/>
+
+  <!-- house body -->
+  <rect x="170" y="290" width="260" height="190" fill="#efe2c6"/>
+  <rect x="384" y="290" width="46" height="190" fill="#d9c6a2" opacity="0.7"/>
+
+  <!-- roof -->
+  <path d="M140 312 L300 166 L460 312 Z" fill="#5c1c23"/>
+  <path d="M300 166 L460 312 L436 312 L300 186 Z" fill="#431419" opacity="0.75"/>
+  <path d="M132 312 L468 312 L468 324 L132 324 Z" fill="#431419"/>
+
+  <!-- chimney -->
+  <rect x="366" y="168" width="30" height="72" fill="#6b3b3a"/>
+  <rect x="360" y="162" width="42" height="10" fill="#431419"/>
+
+  <!-- attic round window -->
+  <circle cx="300" cy="248" r="26" fill="#f0c86a"/>
+  <line x1="274" y1="248" x2="326" y2="248" stroke="#5c1c23" stroke-width="4"/>
+  <line x1="300" y1="222" x2="300" y2="274" stroke="#5c1c23" stroke-width="4"/>
+
+  <!-- arch windows -->
+  <path d="M196 400 V352 Q196 326 224 326 Q252 326 252 352 V400 Z" fill="#f0c86a"/>
+  <path d="M348 400 V352 Q348 326 376 326 Q404 326 404 352 V400 Z" fill="#f0c86a"/>
+  <g stroke="#5c1c23" stroke-width="3" fill="none">
+    <line x1="224" y1="326" x2="224" y2="400"/>
+    <line x1="196" y1="366" x2="252" y2="366"/>
+    <line x1="376" y1="326" x2="376" y2="400"/>
+    <line x1="348" y1="366" x2="404" y2="366"/>
+  </g>
+
+  <!-- door -->
+  <path d="M278 480 V398 Q278 370 300 370 Q322 370 322 398 V480 Z" fill="#3a2a22"/>
+  <circle cx="314" cy="432" r="3.5" fill="#f0c86a"/>
+  <circle cx="300" cy="420" r="110" fill="url(#glow)"/>
+
+  <!-- garden hedges -->
+  <g fill="#56603d">
+    <circle cx="150" cy="466" r="30"/>
+    <circle cx="200" cy="478" r="26"/>
+    <circle cx="420" cy="466" r="32"/>
+    <circle cx="462" cy="482" r="24"/>
+  </g>
+  <g>
+    <circle cx="138" cy="456" r="4" fill="#c98a80"/>
+    <circle cx="170" cy="448" r="4" fill="#efe2c6"/>
+    <circle cx="196" cy="470" r="4" fill="#c98a80"/>
+    <circle cx="410" cy="452" r="4" fill="#efe2c6"/>
+    <circle cx="446" cy="462" r="4" fill="#c98a80"/>
+    <circle cx="472" cy="490" r="4" fill="#efe2c6"/>
+  </g>
+
+  <!-- trees -->
+  <rect x="106" y="352" width="12" height="122" fill="#3a2a22"/>
+  <circle cx="112" cy="330" r="52" fill="#3f4a2e"/>
+  <circle cx="86" cy="352" r="34" fill="#3f4a2e"/>
+  <circle cx="140" cy="352" r="36" fill="#3f4a2e"/>
+  <rect x="496" y="390" width="10" height="90" fill="#3a2a22"/>
+  <circle cx="501" cy="372" r="36" fill="#4a5634"/>
+</svg>
