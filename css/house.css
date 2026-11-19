@@ -1,0 +1,573 @@
+/* ============================================================
+   house.css: the stage, the shared pieces, the walls and doors.
+
+   The page is one fixed stage. Scrolling does not move a page; it
+   walks you through the house (js/house.js). Each room is a .scene
+   that fills the stage. --sw and --sh are the stage's width and
+   height in px, set by the script, so sizes follow the real screen.
+
+   rooms.css    the rooms
+   journal.css  the book
+   games.css    the game table, the games, the drawing board
+   ============================================================ */
+
+:root {
+  --cream: #efe6d2;
+  --cream-2: #e4d6b9;
+  --card: #f7f1e3;
+  --ink: #241b15;
+  --ink-soft: #5b4d40;
+  --oxblood: #5c1c23;
+  --crimson: #7a1c22;
+  --gold: #b28c4a;
+  --gold-light: #dcbf7d;
+  --olive: #3f4a2e;
+  --kraft: #c8a577;
+  --slate: #303b59;
+  --cream-text: #f3e9d4;
+  --marigold: #e9c46a;
+
+  --serif: "Cormorant Garamond", Garamond, "Times New Roman", serif;
+  --script: "Pinyon Script", "Brush Script MT", cursive;
+  --label: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --note: "Reenie Beanie", "Nanum Pen Script", "Segoe Print", cursive; /* Nanum Pen Script draws the Korean words */
+
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --sw: 100vw;
+  --sh: 100vh;
+
+  /* paper fibre, drawn once and reused */
+  --noise: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.25  0 0 0 0 0.18  0 0 0 0 0.1  0 0 0 .32 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+* { margin: 0; padding: 0; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  overscroll-behavior: none;
+  scrollbar-width: none;
+}
+html::-webkit-scrollbar { display: none; }
+html.is-gated,
+html.is-locked { overflow: hidden; }
+
+body {
+  font-family: var(--serif);
+  background: #211a14;
+  color: var(--ink);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img, video, svg { display: block; max-width: 100%; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; border-radius: 0; }
+ol, ul { list-style: none; }
+[hidden] { display: none !important; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+.media { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* ---------- the walk and the stage ---------- */
+.walk { width: 1px; height: 100vh; pointer-events: none; }
+
+.house {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: #211a14;
+}
+.scene {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  visibility: hidden;
+  opacity: 0;
+  /* each room is its own world: a change inside one never makes the browser re-check the others
+     (it already clips to its own box, so nothing looks different) */
+  contain: layout paint;
+}
+.scene:first-child { visibility: visible; opacity: 1; }
+.cam {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 50%;
+}
+/* nothing spins or flickers in a room you are not in */
+.scene:not(.is-here) *,
+.scene:not(.is-here) *::before,
+.scene:not(.is-here) *::after { animation-play-state: paused !important; }
+
+/* pieces arrive when you walk into a room, and stay */
+.arrive {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.9s var(--ease), transform 1.2s var(--ease);
+  transition-delay: var(--ad, 0s);
+}
+.arrive.d1 { --ad: 0.12s; }
+.arrive.d2 { --ad: 0.26s; }
+.arrive.d3 { --ad: 0.42s; }
+.has-arrived .arrive { opacity: 1; transform: none; }
+
+/* depth: pieces nearer to you move a little more with the pointer (house.js moves each one,
+   by -5/-4px for .p1, -11/-8px for .p2 and -18/-13px for .p3 at the edge of the screen) */
+.p1, .p2, .p3 { will-change: translate; }
+
+/* paper grain over the whole stage */
+/* Laid on top normally, on its own layer: drawn once, then just placed over each frame. (A
+   multiply blend here made the browser re-mix the whole screen on every frame of every animation;
+   the grain is small dark-brown specks, so a plain see-through layer looks the same.) */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  opacity: 0.42;
+  background-image: var(--noise);
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* ---------- the lockup: a line of script over a line of spaced capitals ---------- */
+.lock { position: relative; }
+.lock-script {
+  position: relative;
+  z-index: 1;
+  margin-bottom: -0.17em;
+  padding-left: 0.05em;
+  font-family: var(--script);
+  font-weight: 400;
+  font-size: clamp(42px, min(calc(var(--sh) * 0.118), calc(var(--sw) * 0.15)), 136px);
+  line-height: 0.92;
+  white-space: nowrap;
+  color: var(--lock-script, var(--oxblood));
+}
+.lock-caps {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(26px, min(calc(var(--sh) * 0.07), calc(var(--sw) * 0.1)), 84px);
+  line-height: 0.98;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--lock-caps, var(--ink));
+}
+.lock-note {
+  margin-top: 16px;
+  max-width: 30ch;
+  font: italic 400 clamp(16px, calc(var(--sh) * 0.024), 22px) / 1.45 var(--serif);
+  color: var(--lock-note, var(--ink-soft));
+  text-wrap: pretty;
+}
+
+/* ---------- small shared pieces ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 22px;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--cream);
+  font: 600 12px / 1 var(--label);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+}
+.btn:hover { background: var(--oxblood); border-color: var(--oxblood); }
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: 0.45; cursor: default; }
+.btn--ghost { background: transparent; color: var(--ink); border-color: currentColor; }
+.btn--ghost:hover { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+.btn--small { padding: 11px 15px; font-size: 10.5px; }
+.btn--cream { background: var(--cream); color: var(--ink); border-color: var(--cream); }
+.btn--cream:hover { background: #fff; border-color: #fff; color: var(--oxblood); }
+
+/* a strip of masking tape, torn at both ends */
+.tape {
+  position: absolute;
+  width: 120px;
+  height: 28px;
+  background: rgba(214, 190, 140, 0.78);
+  clip-path: polygon(3% 0, 97% 0, 100% 22%, 95% 40%, 100% 62%, 96% 82%, 100% 100%, 3% 100%, 0 78%, 5% 58%, 0 38%, 4% 18%);
+  pointer-events: none;
+}
+.tape--top { top: -14px; left: 50%; translate: -50% 0; rotate: -2deg; }
+
+/* stickers: drawn or PNG; size set by --st on the container */
+.sticker {
+  display: inline-block;
+  width: var(--st, 64px);
+  height: var(--st, 64px);
+  filter: drop-shadow(0 6px 6px rgba(20, 12, 6, 0.28));
+}
+.sticker svg,
+.sticker img { width: 100%; height: 100%; display: block; }
+.sticker-img { object-fit: contain; }
+
+.slip-label {
+  font: 600 10px / 1 var(--label);
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--oxblood);
+}
+.msg {
+  min-height: 1.3em;
+  font: italic 400 18px / 1.3 var(--serif);
+  color: var(--oxblood);
+}
+.msg.good { color: #3e6b3a; }
+.msg.bad { color: #9c3129; }
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+
+/* stand-in for an empty photo slot */
+.doodle {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 8px;
+  background: var(--cream-2);
+}
+.doodle .sticker { --st: 44px; }
+.doodle-label { font: 600 9px / 1 var(--label); letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-soft); }
+
+/* ---------- the gate: select all squares with birthday girl ---------- */
+.gate {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(26, 20, 14, 0.84);
+  transition: opacity 0.7s ease, visibility 0.7s;
+}
+.gate.is-open { opacity: 0; visibility: hidden; pointer-events: none; }
+.gate-loader {
+  position: absolute;
+  text-align: center;
+  color: var(--cream-text);
+  transition: opacity 0.3s ease, visibility 0.3s;
+}
+.gate-loading {
+  font-family: var(--script);
+  font-size: clamp(46px, 7vw, 72px);
+  line-height: 1;
+  color: var(--gold-light);
+}
+.gate-bar { width: min(240px, 70vw); height: 1px; margin: 22px auto 0; background: rgba(243, 233, 212, 0.25); overflow: hidden; }
+.gate-bar span { display: block; height: 100%; width: 0; background: var(--gold-light); animation: load 1.5s ease forwards; }
+@keyframes load { to { width: 100%; } }
+.gate.is-ready .gate-loader { opacity: 0; visibility: hidden; }
+
+.gate-card {
+  width: min(400px, 100%);
+  max-height: 100%;
+  overflow: auto;
+  background: var(--card);
+  color: var(--ink);
+  box-shadow: 0 40px 70px -30px rgba(0, 0, 0, 0.7);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px);
+  transition: opacity 0.5s ease, transform 0.5s ease, visibility 0.5s;
+}
+.gate.is-ready .gate-card { opacity: 1; visibility: visible; transform: none; }
+.gate-head { background: var(--oxblood); color: var(--cream-text); padding: 22px 24px 20px; }
+.gate-kicker { font: 600 11px / 1 var(--label); letter-spacing: 0.22em; text-transform: uppercase; opacity: 0.85; }
+.gate-title { font: italic 500 clamp(40px, 7vw, 54px) / 1 var(--serif); margin: 10px 0; }
+.gate-hint { font: italic 400 19px / 1.2 var(--serif); opacity: 0.85; }
+.gate-grid { display: grid; gap: 4px; padding: 4px; background: var(--card); }
+.pick { position: relative; aspect-ratio: 1; padding: 0; background: var(--cream-2); overflow: hidden; }
+.pick-media { position: absolute; inset: 0; display: grid; place-items: center; overflow: hidden; transition: transform 0.25s ease; }
+.pick-media .sticker { --st: 58%; }
+.pick.is-on .pick-media { transform: scale(0.86); }
+.pick.is-on::after {
+  content: "";
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+  width: 22px;
+  height: 22px;
+  background: var(--gold);
+  box-shadow: 0 0 0 2px var(--card);
+  clip-path: polygon(14% 52%, 0 66%, 42% 100%, 100% 22%, 86% 8%, 42% 72%);
+}
+.gate-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; padding: 12px 16px 16px; }
+.gate-msg { flex: 1 1 100%; min-height: 1.2em; font: italic 400 19px / 1.2 var(--serif); color: var(--oxblood); }
+.gate-msg.good { color: #3e6b3a; }
+.gate-msg.bad { color: #9c3129; }
+.gate-actions { display: flex; gap: 8px; margin-left: auto; }
+
+/* ---------- where you are, and the way on ---------- */
+.where {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  z-index: 55;
+  padding: 10px 14px;
+  background: rgba(239, 230, 210, 0.94);
+  border: 1px solid rgba(36, 27, 21, 0.18);
+  font: 600 10.5px / 1 var(--label);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+.where span { color: var(--oxblood); }
+
+.walk-ui {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 55;
+  display: flex;
+  gap: 8px;
+  transition: opacity 0.4s ease;
+}
+.walk-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 40px;
+  min-width: 40px;
+  padding: 0 13px;
+  background: rgba(239, 230, 210, 0.94);
+  border: 1px solid rgba(36, 27, 21, 0.18);
+  color: var(--ink);
+  font: 600 10.5px / 1 var(--label);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+.walk-btn svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.walk-btn:hover { background: var(--ink); color: var(--cream); }
+.walk-btn:active { transform: translateY(1px); }
+.walk-btn--next svg { transition: transform 0.25s var(--ease); }
+.walk-btn--next:hover svg { transform: translateX(3px); }
+.walk-ui.is-end .walk-btn--next { display: none; }
+html.is-gated .where,
+html.is-gated .walk-ui,
+html.is-locked .walk-ui { opacity: 0; pointer-events: none; }
+
+/* the rooms, as a hand-written list */
+.rooms-card {
+  position: fixed;
+  right: 16px;
+  bottom: 66px;
+  z-index: 56;
+  width: 232px;
+  padding: 18px 20px 14px;
+  background-color: var(--card);
+  background-image: var(--img-paper, none);
+  background-size: 420px;
+  box-shadow: 0 30px 40px -20px rgba(20, 12, 6, 0.6), 0 2px 6px rgba(20, 12, 6, 0.2);
+  rotate: 0.6deg;
+}
+.rooms-title { font-family: var(--script); font-size: 36px; line-height: 1; color: var(--oxblood); margin-bottom: 6px; }
+.rooms-card li + li { border-top: 1px dotted rgba(36, 27, 21, 0.3); }
+.rooms-card button {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 7px 0;
+  font: italic 400 18px / 1.2 var(--serif);
+  text-align: left;
+}
+.rooms-card button:hover { color: var(--oxblood); }
+.rooms-card button.is-here { color: var(--oxblood); font-weight: 600; }
+.rooms-card button.is-here::after { content: "you are here"; font: 600 8.5px / 1 var(--label); letter-spacing: 0.2em; text-transform: uppercase; font-style: normal; }
+
+/* a quick blink of the lights when you jump across the house */
+.house.is-blink .scene { transition: none; }
+.blink {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: #1a130d;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.32s ease;
+}
+.blink.is-on { opacity: 1; }
+
+/* ---------- walls: a flat wall, seen straight on ---------- */
+.wall {
+  position: absolute;
+  inset: 0;
+  --floor-y: 91%;
+  background-color: var(--wall, #ead8b4);
+  background-image: var(--wall-tex, var(--img-paper, none));
+  background-size: var(--wall-tex-size, 520px);
+}
+/* the light falls off toward the ceiling and the floor */
+.wall::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(60, 40, 14, 0.2), rgba(60, 40, 14, 0) 24%, rgba(60, 40, 14, 0) 62%, rgba(60, 40, 14, 0.14));
+}
+.wall-rail {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--sh) * 0.07);
+  height: 9px;
+  background: linear-gradient(180deg, #f8f0dd, #d9c79f);
+  box-shadow: 0 3px 4px rgba(60, 40, 14, 0.25);
+}
+/* the panelled lower wall */
+.wall-dado {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 81.5%;
+  bottom: calc(100% - var(--floor-y));
+  background-color: var(--dado, #dfcba1);
+  background-image:
+    linear-gradient(180deg, #f6eedb 0 7px, rgba(70, 45, 15, 0.28) 7px 9px, transparent 9px),
+    linear-gradient(0deg, transparent 0 16%, rgba(255, 255, 255, 0.3) 16% calc(16% + 2px), transparent calc(16% + 2px) 78%, rgba(70, 45, 15, 0.2) 78% calc(78% + 2px), transparent calc(78% + 2px)),
+    repeating-linear-gradient(90deg, transparent 0 20px, rgba(70, 45, 15, 0.2) 20px 22px, transparent 22px 218px, rgba(255, 255, 255, 0.34) 218px 220px, transparent 220px 240px),
+    var(--img-paper, none);
+  background-size: auto, auto, auto, 520px;
+}
+.wall-skirt {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: var(--floor-y);
+  height: calc(var(--sh) * 0.024);
+  translate: 0 -100%;
+  background: linear-gradient(180deg, #f9f1df, #e2d2ac);
+  box-shadow: 0 -1px 0 rgba(70, 45, 15, 0.25), 0 2px 4px rgba(40, 24, 8, 0.35);
+}
+/* the floor: a runner, olive with an oxblood stripe, like the one in the front hall */
+.wall-floor {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: var(--floor-y);
+  bottom: 0;
+  background-color: var(--floor, #77804f);
+  background-image:
+    linear-gradient(180deg, rgba(30, 18, 6, 0.4), rgba(30, 18, 6, 0) 38%),
+    linear-gradient(180deg, var(--floor-stripe, #6d1f24) 0 12%, transparent 12% 20%, var(--floor-stripe, #6d1f24) 20% 30%, transparent 30%),
+    var(--noise);
+}
+.wall--plaster { --wall: #ead8b4; --dado: #dfcba1; }
+.wall--damask {
+  --wall: #3c4429;
+  --wall-tex: var(--img-wallpaper, none);
+  --wall-tex-size: 360px;
+  --floor: #2c3120;
+  --floor-stripe: #5c1c23;
+}
+.wall--studio { --wall: #f0e8d6; --floor: #b9ab8a; --floor-stripe: #a39474; }
+
+/* ---------- a doorway: the frame, the door, and the room beyond it ---------- */
+.doorway {
+  --dh: calc(var(--sh) * 0.6);
+  --dw: calc(var(--dh) * 0.467);
+  --trim: calc(var(--dh) * 0.05);
+  position: absolute;
+  bottom: 9%;
+  width: calc(var(--dw) + var(--trim) * 2);
+  height: calc(var(--dh) + var(--trim));
+  z-index: 2;
+}
+.door-plaque {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 16px);
+  translate: -50% 0;
+  padding: 8px 18px 7px;
+  white-space: nowrap;
+  font: 600 10px / 1 var(--label);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #3a2a12;
+  background: linear-gradient(180deg, #ead59c, #b9974f);
+  box-shadow: inset 0 0 0 1px rgba(90, 60, 14, 0.55), inset 0 0 0 3px rgba(255, 240, 200, 0.35), 0 2px 3px rgba(40, 24, 6, 0.4);
+}
+.door-frame {
+  position: absolute;
+  inset: 0;
+  padding: var(--trim) var(--trim) 0;
+  border-radius: 3px 3px 0 0;
+  background: linear-gradient(90deg, #f8f0dd, #e0cfa8 14%, #f6eedb 26%, #f3e8cf 74%, #e0cfa8 86%, #f8f0dd);
+  box-shadow: 0 0 0 1px rgba(80, 54, 20, 0.28), 8px 10px 16px -8px rgba(50, 30, 10, 0.45);
+}
+.door-hole {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #1c120b;
+  perspective: calc(var(--dw) * 3.4);
+  box-shadow: inset 0 0 0 1px rgba(40, 24, 8, 0.5);
+}
+.door-beyond { position: absolute; inset: 0; background-size: cover; background-position: center; }
+.door-dim { position: absolute; inset: 0; background: #160e08; opacity: 0.55; }
+.door-leaf {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  transform-origin: 0 50%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background: #6e1a1f;
+}
+.door-leaf img { position: absolute; left: -25%; top: -2.49%; width: 150%; height: 105.14%; max-width: none; }
+.door-leaf-shade { position: absolute; inset: 0; background: #1a0d08; opacity: 0; }
+
+/* what you see through a doorway: the wall of the next room */
+.beyond--vanity { background-color: #e9bfa6; background-image: var(--img-vanityBg, none); }
+.beyond--living { background-color: #6b1d21; }
+.beyond--study { background-color: var(--slate); }
+.beyond--games { background-color: #3c4429; background-image: var(--img-wallpaper, none); background-size: 220px; }
+.beyond--studio { background-color: #f0e8d6; }
+
+/* a room with its door off to the right: the room, then the wall the door is in */
+.pan {
+  --dz: calc(var(--sw) * 0.46);
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: calc(var(--sw) + var(--dz));
+  display: flex;
+}
+.room-body { position: relative; flex: none; width: var(--sw); height: 100%; }
+.door-zone { position: relative; flex: none; width: var(--dz); height: 100%; }
+.door-zone .doorway { left: 50%; translate: -50% 0; }
+
+@media (max-width: 760px) {
+  .pan { --dz: var(--sw); }
+  .doorway { --dh: calc(var(--sh) * 0.52); }
+  .where { left: 10px; bottom: 10px; padding: 9px 11px; font-size: 9.5px; letter-spacing: 0.2em; }
+  .walk-ui { right: 10px; bottom: 10px; gap: 6px; }
+  .walk-btn { height: 36px; min-width: 36px; padding: 0 11px; font-size: 9.5px; }
+  .rooms-card { right: 10px; bottom: 56px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arrive { transition-duration: 0.01s; transform: none; }
+  .p1, .p2, .p3 { translate: none; }
+}
+
+/* ---------- optional art (js/content.js): each rule applies only once its picture is saved ---------- */
+/* washi tape on the letter and the prompt slip */
+.has-tapeCream .tape { background: var(--img-tapeCream) center / 100% 100% no-repeat; clip-path: none; height: auto; aspect-ratio: 5.3; } /* the tape picture keeps its own shape */
+/* a real plaster wall in the hallway, and a sunlit wall in the studio */
+.has-plaster .wall--plaster { --wall-tex: var(--img-plaster); --wall-tex-size: 640px; }
+.has-studioWall .wall--studio { --wall-tex: var(--img-studioWall); --wall-tex-size: cover; background-position: center; }

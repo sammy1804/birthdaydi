@@ -1,10 +1,16 @@
-Drop the hallway photos in this folder.
+The photos and clips for the hallway wall, the gate, the reel and the record.
 
-Then point each one at its file in js/content.js, in order:
+  chat/   the photos on the hallway wall
+  didi/   photos of her: the mirror, the record, and the squares of the gate that show her
+  real/   photos without her in them: the other squares of the gate
+  ../clips/  the short videos on the hallway wall
+
+To add one to the wall, save it here and add a line to "photos" in js/content.js:
 
   photos: [
-    { src: "assets/photos/01-first.jpg", caption: "the first one" },
+    { src: "assets/photos/chat/photo-25.jpg", caption: "a few words about it" },
     ...
   ]
 
-Portrait photos (4:5) fit the polaroid frames best. Empty src shows a doodle card.
+Each one hangs in a frame. The frame crops the photo to fit, so any shape works;
+portrait photos and videos fill the frames best. A caption is optional.

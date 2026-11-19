@@ -1,0 +1,503 @@
+/* ============================================================
+   journal.css: the study and the journal.
+
+   An open book on a flat slate wall. The spread sits in front, its
+   two pages tilted up from the spine. Behind it, on both sides, the
+   other pages fan out: the ones already read on the left, the ones
+   to come on the right. A turn lifts one half-page off the spine and
+   folds it over. The book starts closed and opens when you reach it.
+   ============================================================ */
+
+.study { color: #f4f6fb; }
+.study > .cam { background: var(--slate); }
+.study-bg { position: absolute; inset: 0; background: var(--slate); }
+/* a plain slate wall, with a skirting and a darker floor along the bottom */
+.study-bg::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 91%;
+  bottom: 0;
+  background: #252d47;
+  box-shadow: 0 calc(var(--sh) * -0.022) 0 #3d4766;
+}
+.study .room-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(14px, calc(var(--sh) * 0.034), 34px);
+  padding: calc(var(--sh) * 0.04) 4% calc(var(--sh) * 0.07);
+}
+.jr-head { text-align: center; }
+.jr-head h2 { font: 600 clamp(26px, calc(var(--sh) * 0.046), 42px) / 1 var(--label); letter-spacing: -0.01em; color: #fff; }
+.jr-count {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+  font: 600 12px / 1 var(--label);
+  color: #c7cee2;
+}
+.jr-count svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linejoin: round; }
+
+/* ---------- the book ---------- */
+.bk {
+  --ph: min(calc(var(--sh) * 0.58), 580px, calc((var(--sw) - 260px) / 1.44));
+  --pw: calc(var(--ph) * 0.72);
+  --tilt: 7deg;
+  --step: clamp(18px, calc(var(--sw) * 0.026), 40px);
+  position: relative;
+  flex: none;
+  width: calc(var(--pw) * 2);
+  height: var(--ph);
+  transition: translate 1.25s var(--ease);
+}
+.bk.is-single { width: var(--pw); }
+.bk-spread { position: absolute; inset: 0; perspective: 1700px; }
+
+/* the two open pages, each tilted up from the spine toward you */
+.bk-half { position: absolute; top: 0; width: 50%; height: 100%; z-index: 20; transition: opacity 0.5s ease; }
+.bk-left { left: 0; transform-origin: 100% 50%; transform: rotateY(var(--tilt)); }
+.bk-right { left: 50%; transform-origin: 0 50%; transform: rotateY(calc(var(--tilt) * -1)); }
+
+/* ---------- the pages fanned out behind ---------- */
+.bk-fan { position: absolute; inset: 0; transition: opacity 0.6s ease 0.5s; }
+.bk-fp {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 18px;
+  background-color: #e9dfc8;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 20px 26px -14px rgba(5, 8, 22, 0.75);
+  filter: brightness(calc(1 - var(--i) * 0.085));
+  z-index: calc(12 - var(--i));
+  transition: transform 0.7s var(--ease), filter 0.7s ease, opacity 0.45s ease;
+  animation: fp-in 0.5s ease backwards;
+}
+@keyframes fp-in { from { opacity: 0; } }
+.bk-fp.is-out { opacity: 0; }
+.bk-fan-l .bk-fp {
+  left: 0;
+  transform-origin: 100% 50%;
+  transform: translateX(calc(var(--i) * var(--step) * -1)) rotateY(calc(var(--tilt) + var(--i) * 1.6deg)) scale(calc(1 - var(--i) * 0.03));
+}
+.bk-fan-r .bk-fp {
+  left: 50%;
+  transform-origin: 0 50%;
+  transform: translateX(calc(var(--i) * var(--step))) rotateY(calc((var(--tilt) + var(--i) * 1.6deg) * -1)) scale(calc(1 - var(--i) * 0.03));
+}
+/* each one is in the shadow of the page in front of it */
+.bk-fp::after { content: ""; position: absolute; inset: 0; }
+.bk-fan-l .bk-fp::after { background: linear-gradient(to left, rgba(10, 14, 34, 0.7), rgba(10, 14, 34, 0.08) 70%); }
+.bk-fan-r .bk-fp::after { background: linear-gradient(to right, rgba(10, 14, 34, 0.7), rgba(10, 14, 34, 0.08) 70%); }
+
+/* ---------- a page ---------- */
+.bk-page {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 6.5% 7.5% 9%;
+  text-align: left;
+  color: #2b241c;
+  background-color: #f5ecd9;
+  background-image: var(--noise);
+  border-radius: 18px;
+  box-shadow: 0 26px 30px -18px rgba(8, 6, 18, 0.8), 0 3px 8px rgba(8, 6, 18, 0.22);
+}
+/* the sheen of paper that curves away at the top and bottom, and the shade toward the spine */
+.bk-page::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0) 20%, rgba(255, 255, 255, 0) 80%, rgba(60, 40, 20, 0.16));
+}
+.bk-page--left { border-radius: 18px 3px 3px 18px; }
+.bk-page--right { border-radius: 3px 18px 18px 3px; }
+.bk-page--left::after { background: linear-gradient(to left, rgba(50, 34, 16, 0.34), rgba(50, 34, 16, 0) 17%), linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0) 20%, rgba(255, 255, 255, 0) 80%, rgba(60, 40, 20, 0.16)); }
+.bk-page--right::after { background: linear-gradient(to right, rgba(50, 34, 16, 0.34), rgba(50, 34, 16, 0) 17%), linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0) 20%, rgba(255, 255, 255, 0) 80%, rgba(60, 40, 20, 0.16)); }
+
+/* the paper changes from page to page */
+.pp-1 { background-color: #efe1c4; }
+.pp-2 {
+  background-color: #f4eee0;
+  background-image:
+    linear-gradient(rgba(150, 120, 80, 0.13) 50%, transparent 50%),
+    linear-gradient(90deg, rgba(150, 120, 80, 0.13) 50%, transparent 50%),
+    var(--noise);
+  background-size: 26px 26px, 26px 26px, auto;
+}
+.pp-3 { background-color: #e6ebe6; }
+.pp-4 { background-color: #f3e2dc; }
+
+/* the area the prints sit in */
+.bk-stage { position: relative; flex: 1 1 auto; min-height: 0; width: 100%; }
+/* a print: a cream border, a little tilt and a soft shadow, so it sits on the page */
+.bk-print {
+  position: absolute;
+  left: var(--x, 3%);
+  top: var(--y, 4%);
+  width: var(--w, 94%);
+  height: var(--h, 91%);
+  margin: 0;
+  border: var(--bw, 7px) solid #fbf7ee;
+  background: #e8dcc5;
+  box-shadow: 0 1px 1px rgba(40, 25, 10, 0.2), 0 14px 18px -12px rgba(40, 25, 10, 0.6);
+  rotate: var(--rt, 0deg);
+  z-index: var(--z, 1);
+}
+.bk-print img,
+.bk-print video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--op, 50% 30%);
+  display: block;
+  pointer-events: none;
+}
+.bk-print.is-polaroid { border-width: var(--bw, 7px) var(--bw, 7px) calc(var(--bw, 7px) * 3.4); }
+.bk-print.is-gone { display: none; }
+
+/* a page where the photo runs to every edge, with its words on a label */
+.bk-page.is-bleed { padding: 0; }
+.bk-page.is-bleed .bk-stage { position: absolute; inset: 0; }
+.bk-page.is-bleed .bk-print { inset: 0; left: 0; top: 0; width: 100%; height: 100%; border: 0; rotate: none; box-shadow: none; }
+.bk-page.is-bleed .bk-words {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: 8%;
+  z-index: 4;
+  padding: 0.7em 0.9em 0.75em;
+  background: rgba(251, 245, 234, 0.9);
+  box-shadow: 0 8px 14px -8px rgba(20, 12, 6, 0.6);
+  rotate: -1.4deg;
+}
+.bk-page.is-bleed .bk-cap { margin-top: 0; }
+.bk-page.is-bleed .at-tl { top: 5%; left: 5%; }
+.bk-page.is-bleed .at-tr { top: 5%; right: 5%; }
+.bk-page.is-bleed .at-bl { bottom: 30%; left: 5%; }
+.bk-page.is-bleed .at-br { bottom: 30%; right: 5%; }
+.bk-page.is-bleed .at-l { left: 4%; }
+.bk-page.is-bleed .at-r { right: 4%; }
+
+/* a round detail cut from the same photo, with a white cut edge */
+.bk-cut {
+  width: 36%;
+  aspect-ratio: 1;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 50%;
+  border: 6px solid #fbf7ee;
+  background: #e8dcc5;
+  box-shadow: 0 1px 1px rgba(40, 25, 10, 0.2), 0 10px 14px -8px rgba(40, 25, 10, 0.6);
+}
+.bk-cut img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  transform: scale(var(--zoom, 2));
+  transform-origin: var(--ox, 50%) var(--oy, 50%);
+}
+/* a sticker cut out of a photo: a PNG of just her, with a white die-cut edge */
+.bk-diecut {
+  width: var(--w, 52%);
+  margin: 0;
+  filter: drop-shadow(3px 0 0 #fbf7ee) drop-shadow(-3px 0 0 #fbf7ee) drop-shadow(0 3px 0 #fbf7ee) drop-shadow(0 -3px 0 #fbf7ee) drop-shadow(0 8px 7px rgba(40, 25, 10, 0.45));
+}
+.bk-diecut img { width: 100%; height: auto; display: block; pointer-events: none; }
+/* the photo drawn in pencil: grey, with the lines dodged out of an inverted, blurred copy of itself */
+.bk-sketch {
+  width: 34%;
+  aspect-ratio: 4 / 5;
+  margin: 0;
+  overflow: hidden;
+  isolation: isolate;
+  border: 6px solid #fbf7ee;
+  background: #f4efe2;
+  box-shadow: 0 1px 1px rgba(40, 25, 10, 0.2), 0 10px 14px -8px rgba(40, 25, 10, 0.55);
+}
+.bk-sketch img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+.bk-sketch img:first-child { filter: grayscale(1) contrast(1.12) brightness(1.06); }
+.bk-sketch .bk-lines { filter: grayscale(1) invert(1) blur(3px); mix-blend-mode: color-dodge; }
+
+/* the paper pieces: placed on a corner or an edge of the stage, turned a little */
+.bk-deco { position: absolute; z-index: 5; pointer-events: none; rotate: var(--rot, 0deg); }
+.at-tl { top: -10px; left: -14px; }
+.at-tr { top: -10px; right: -14px; }
+.at-bl { bottom: -10px; left: -14px; }
+.at-br { bottom: -10px; right: -14px; }
+.at-l { left: -20px; top: 40%; }
+.at-r { right: -20px; top: 32%; }
+.bk-tape {
+  width: 74px;
+  height: 22px;
+  background-color: rgba(232, 212, 158, 0.84);
+  background-image: repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.3) 0 3px, transparent 3px 7px);
+  box-shadow: 0 1px 2px rgba(40, 25, 10, 0.18);
+  clip-path: polygon(0 0, 100% 0, 96% 25%, 100% 50%, 96% 75%, 100% 100%, 0 100%, 4% 75%, 0 50%, 4% 25%);
+}
+.bk-tape.is-rose { background-color: rgba(214, 150, 150, 0.8); }
+.bk-tape.is-sage { background-color: rgba(160, 176, 140, 0.82); }
+.bk-sticker { --st: clamp(40px, calc(var(--ph) * 0.105), 60px); }
+/* a trip sticker (a shell for Goa, a ghost for Jaipur): a little bigger than the others */
+.bk-sticker.is-trip { --st: clamp(50px, calc(var(--ph) * 0.14), 80px); }
+/* a rubber stamp in blue ink */
+.bk-stamp {
+  --stamp: clamp(58px, calc(var(--ph) * 0.14), 78px);
+  width: var(--stamp);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border: 2px solid rgba(46, 62, 112, 0.62);
+  border-radius: 50%;
+  color: rgba(46, 62, 112, 0.76);
+  font: 600 10px / 1 var(--label);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-align: center;
+  outline: 1px solid rgba(46, 62, 112, 0.5);
+  outline-offset: -7px;
+  background: rgba(251, 247, 238, 0.5);
+}
+/* a long place name (Himachal) gets an oval stamp, wide enough for every letter */
+.bk-stamp.is-long { width: auto; aspect-ratio: auto; height: calc(var(--stamp) * 0.74); padding: 0 17px; }
+/* a sticky note with a few words */
+.bk-post {
+  width: clamp(64px, calc(var(--ph) * 0.15), 84px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  padding: 8px;
+  background: #f4e58e;
+  color: #3b3122;
+  font-family: var(--note);
+  font-size: clamp(19px, calc(var(--ph) * 0.045), 25px);
+  line-height: 0.95;
+  text-align: center;
+  box-shadow: 0 8px 12px -8px rgba(40, 25, 10, 0.55), 0 1px 2px rgba(40, 25, 10, 0.15);
+}
+.bk-post.is-pink { background: #f2c3cc; }
+
+/* the words on a page */
+.bk-words { flex: none; }
+.bk-date { margin-top: 12px; font: 600 9.5px / 1 var(--label); letter-spacing: 0.18em; text-transform: uppercase; color: #7a6a58; }
+.bk-cap { margin-top: 9px; font: italic 500 clamp(13.5px, calc(var(--ph) * 0.03), 17px) / 1.3 var(--serif); color: #3a3026; text-wrap: pretty; }
+.bk-note { margin-top: 6px; font: 400 clamp(11.5px, calc(var(--ph) * 0.0235), 13.5px) / 1.42 var(--serif); color: #4a3f33; text-wrap: pretty; }
+
+/* a written page: a memory whose photo is not in the book yet. The words fill it, in her sibling's hand. */
+.bk-page.is-written {
+  justify-content: center;
+  background-image:
+    repeating-linear-gradient(180deg, transparent 0 calc(1.72em - 1px), rgba(90, 110, 150, 0.2) calc(1.72em - 1px) 1.72em),
+    var(--noise);
+  font-size: clamp(15px, calc(var(--ph) * 0.034), 20px);
+}
+.bk-page.is-written .bk-stage { display: none; }
+.bk-page.is-written .bk-words { display: flex; flex-direction: column; gap: 0.5em; }
+.bk-page.is-written .bk-date { margin: 0; order: -1; }
+.bk-page.is-written .bk-cap { margin: 0; font: 400 clamp(30px, calc(var(--ph) * 0.085), 46px) / 0.95 var(--script); color: var(--oxblood); }
+.bk-page.is-written .bk-note { margin: 0; font: 400 clamp(21px, calc(var(--ph) * 0.05), 28px) / 1.06 var(--note); color: #33405f; }
+/* the letter's sign-off, in the same script as its greeting */
+.bk-sign { margin: 0.4em 0 0; align-self: flex-end; font: 400 clamp(26px, calc(var(--ph) * 0.07), 40px) / 1 var(--script); color: var(--oxblood); }
+.bk-page.is-written .bk-stamp-w {
+  position: absolute;
+  right: 9%;
+  top: 8%;
+  rotate: 9deg;
+}
+.bk-page.is-written .bk-trip-w {
+  position: absolute;
+  left: 8%;
+  bottom: 7%;
+  rotate: -9deg;
+  pointer-events: none;
+}
+
+/* the last page */
+.bk-end { margin: auto 0; text-align: center; }
+.bk-end h3 { margin-bottom: 14px; font: 600 10px / 1 var(--label); letter-spacing: 0.24em; text-transform: uppercase; color: #8a7560; }
+.bk-end p { font: italic 400 clamp(21px, calc(var(--ph) * 0.052), 30px) / 1.3 var(--serif); color: #3a2f24; text-wrap: balance; }
+
+/* ---------- the spine, the turning leaf and its shadows ---------- */
+.bk-spine {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  z-index: 22;
+  width: 14px;
+  height: 100%;
+  translate: -50% 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(30, 20, 10, 0), rgba(30, 20, 10, 0.3) 45%, rgba(30, 20, 10, 0.42) 50%, rgba(30, 20, 10, 0.3) 55%, rgba(30, 20, 10, 0));
+  transition: opacity 0.5s ease;
+}
+.bk-cast { position: absolute; top: 0; z-index: 23; width: 50%; height: 100%; opacity: 0; pointer-events: none; }
+.bk-cast-l { left: 0; background: linear-gradient(to left, rgba(20, 14, 8, 0.6), rgba(20, 14, 8, 0) 65%); }
+.bk-cast-r { left: 50%; background: linear-gradient(to right, rgba(20, 14, 8, 0.6), rgba(20, 14, 8, 0) 65%); }
+.bk-leaf {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 24;
+  width: 50%;
+  height: 100%;
+  transform-style: preserve-3d;
+  display: none;
+}
+.bk-leaf.is-on { display: block; }
+/* the leaf folds in two at a crease: the half by the spine hinges on the spine, the outer half on the crease */
+.bk-seg { position: absolute; top: 0; width: 100%; height: 100%; transform-style: preserve-3d; }
+.bk-seg-in { left: 0; width: 50%; transform-origin: 0% 50%; }
+.bk-seg-out { left: 100%; transform-origin: 0% 50%; }
+.bk-sheet { position: absolute; top: 0; width: 200%; height: 100%; }
+.bk-face { position: absolute; inset: 0; overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.bk-back { transform: rotateY(180deg); }
+.bk-shade { position: absolute; inset: 0; z-index: 7; background: #2a1d10; opacity: 0; pointer-events: none; }
+
+/* ---------- the cover: the book is closed until you reach it ---------- */
+.bk-cover {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 30;
+  width: 50%;
+  height: 100%;
+  padding: 0;
+  transform-origin: 0 50%;
+  transform-style: preserve-3d;
+  transform: rotateY(-180deg);
+  visibility: hidden;
+  transition: transform 1.35s cubic-bezier(0.5, 0.02, 0.2, 1), visibility 0s linear 1.95s;
+  pointer-events: none;
+}
+.bk-cover-face,
+.bk-cover-inside { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.bk-cover-face {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4%;
+  padding: 9% 10% 9% 14%;
+  border-radius: 5px 18px 18px 5px;
+  color: #ecd9a8;
+  background-color: var(--oxblood);
+  background-image: linear-gradient(90deg, rgba(0, 0, 0, 0.38) 0 4%, rgba(255, 255, 255, 0.08) 5.5%, rgba(0, 0, 0, 0.16) 8%, rgba(0, 0, 0, 0) 12%), var(--noise);
+  box-shadow: inset 0 0 0 1px rgba(236, 217, 168, 0.18), 0 30px 34px -18px rgba(5, 6, 18, 0.85);
+}
+/* a thin gilt rule round the board */
+.bk-cover-face::after {
+  content: "";
+  position: absolute;
+  inset: 5% 5% 5% 12%;
+  border: 1px solid rgba(236, 217, 168, 0.55);
+  border-radius: 8px;
+  pointer-events: none;
+}
+.bk-cover-photo {
+  width: 62%;
+  aspect-ratio: 4 / 5;
+  border: 6px solid #fbf7ee;
+  background: #e8dcc5 center / cover no-repeat;
+  box-shadow: 0 12px 16px -10px rgba(0, 0, 0, 0.7);
+  rotate: -2deg;
+}
+.bk-cover-title { font-family: var(--script); font-size: clamp(38px, calc(var(--ph) * 0.13), 74px); line-height: 0.9; }
+.bk-cover-sub { font: 600 9.5px / 1 var(--label); letter-spacing: 0.28em; text-transform: uppercase; opacity: 0.85; }
+/* the inside of the cover: once the cover has landed it thins away, and the first page is under it */
+.bk-cover-inside {
+  transform: rotateY(180deg);
+  border-radius: 18px 5px 5px 18px;
+  background-color: #efe6d2;
+  background-image: var(--noise);
+  opacity: 0;
+  transition: opacity 0.55s ease 1.35s;
+}
+/* closed: the book is half as wide, so it sits a half-page to the left to stay centred */
+.bk.is-closed { translate: calc(var(--pw) * -0.5) 0; }
+/* inherit, not visible: the cover follows its room, so a closed book never catches taps
+   meant for the room you are actually in (every room sits in the same place, hidden) */
+.bk.is-closed .bk-cover { transform: rotateY(0deg); visibility: inherit; pointer-events: auto; transition: none; cursor: pointer; }
+.bk.is-closed .bk-cover-inside { opacity: 1; transition: none; }
+.bk.is-closed .bk-left,
+.bk.is-closed .bk-spine,
+.bk.is-closed .bk-fan { opacity: 0; transition: none; }
+.bk.is-closed ~ .bk-nav { opacity: 0; pointer-events: none; }
+
+/* ---------- a phone: one page at a time ---------- */
+.bk.is-single .bk-left,
+.bk.is-single .bk-spine,
+.bk.is-single .bk-cast-l { display: none; }
+.bk.is-single .bk-right,
+.bk.is-single .bk-cast-r { left: 0; width: 100%; }
+.bk.is-single .bk-right { transform: none; }
+.bk.is-single .bk-leaf { left: 0; width: 100%; }
+.bk.is-single .bk-fp { width: 100%; }
+.bk.is-single .bk-fan-r .bk-fp { left: 0; transform-origin: 100% 50%; transform: translateX(calc(var(--i) * var(--step))) scale(calc(1 - var(--i) * 0.035)); }
+.bk.is-single .bk-fan-l .bk-fp { left: 0; transform-origin: 0 50%; transform: translateX(calc(var(--i) * var(--step) * -1)) scale(calc(1 - var(--i) * 0.035)); }
+.bk.is-single .bk-fan-r .bk-fp::after { background: linear-gradient(to left, rgba(10, 14, 34, 0.1), rgba(10, 14, 34, 0.7)); }
+.bk.is-single .bk-fan-l .bk-fp::after { background: linear-gradient(to right, rgba(10, 14, 34, 0.1), rgba(10, 14, 34, 0.7)); }
+.bk.is-single .bk-cover { left: 0; width: 100%; }
+.bk.is-single.is-closed { translate: none; }
+.bk.is-single .bk-page { border-radius: 18px; }
+
+/* ---------- the controls ---------- */
+.bk-nav { display: flex; align-items: center; justify-content: center; gap: 14px; transition: opacity 0.5s ease 0.6s; }
+.book-pages { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.pl-btn {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #f1f3f8;
+  color: #29324c;
+  box-shadow: 0 10px 20px -12px rgba(0, 0, 0, 0.6);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+.pl-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.pl-btn:hover { background: #fff; transform: translateY(-1px); }
+.pl-btn:active { transform: scale(0.96); }
+.pl-btn:disabled { opacity: 0.4; cursor: default; transform: none; }
+.pl-btn:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+
+@media (max-width: 860px) {
+  .bk {
+    --ph: min(calc(var(--sh) * 0.58), calc(var(--sw) * 1.06));
+    --step: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bk, .bk-cover, .bk-fp { transition-duration: 0.01s !important; }
+}
+
+/* ---------- optional art (js/content.js): each rule applies only once its picture is saved ---------- */
+/* the cover: real bookcloth under the spine's shading */
+.has-coverCloth .bk-cover-face {
+  background-image: linear-gradient(90deg, rgba(0, 0, 0, 0.38) 0 4%, rgba(255, 255, 255, 0.08) 5.5%, rgba(0, 0, 0, 0.16) 8%, rgba(0, 0, 0, 0) 12%), var(--img-coverCloth);
+  background-size: auto, 300px;
+}
+/* washi tape, in three colours */
+.has-tapeCream .bk-tape:not(.is-rose):not(.is-sage) { background: var(--img-tapeCream) center / 100% 100% no-repeat; clip-path: none; box-shadow: none; width: 96px; height: auto; aspect-ratio: 5.3; }
+.has-tapeRose .bk-tape.is-rose { background: var(--img-tapeRose) center / 100% 100% no-repeat; clip-path: none; box-shadow: none; width: 96px; height: auto; aspect-ratio: 5.3; }
+.has-tapeSage .bk-tape.is-sage { background: var(--img-tapeSage) center / 100% 100% no-repeat; clip-path: none; box-shadow: none; width: 96px; height: auto; aspect-ratio: 5.3; }
+/* hand-drawn doodles, in ink: they print onto the paper and the photos */
+.bk-doodle { width: 26%; height: auto; mix-blend-mode: multiply; }

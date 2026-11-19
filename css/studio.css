@@ -1,0 +1,304 @@
+/* ============================================================
+   studio.css: the studio. The library of mandalas on the left (and
+   the string where finished ones hang), the drawing board on the
+   right: a taped sheet of paper, the colour stories, the paint tin
+   and the tools. The drawing itself is in js/studio.js.
+   ============================================================ */
+
+.studio > .cam { background: #f0e8d6; }
+.studio-layout {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  align-items: center;
+  gap: 3.5%;
+  padding: 3% 4.5% 8%;
+}
+.studio-side { display: flex; flex-direction: column; gap: clamp(14px, calc(var(--sh) * 0.03), 28px); }
+.studio .lock-script { font-size: clamp(44px, min(calc(var(--sh) * 0.1), calc(var(--sw) * 0.072)), 108px); }
+.studio .lock-note { max-width: 30ch; }
+
+/* ---------- the library ---------- */
+.lib-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: clamp(4px, calc(var(--sh) * 0.01), 10px) 8px;
+  margin-top: 10px;
+  max-width: 560px;
+}
+.lib-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 2px;
+  transition: transform 0.3s var(--ease);
+}
+.lib-item:hover { transform: translateY(-4px) rotate(-3deg); }
+.lib-art {
+  width: min(100%, calc(var(--sh) * 0.1));
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #fbf4e4;
+  box-shadow: 0 7px 10px -6px rgba(60, 40, 10, 0.6), 0 0 0 1px rgba(60, 40, 10, 0.12);
+}
+.lib-art path { fill: #fbf4e4; stroke: #3a2c22; stroke-width: 7; stroke-linejoin: round; }
+.lib-art .md-rim { fill: none; stroke: #3a2c22; stroke-width: 7; }
+.lib-item.is-on .lib-art { box-shadow: 0 0 0 3px #c9a04f, 0 7px 10px -6px rgba(60, 40, 10, 0.6); }
+.lib-name { font: 400 clamp(16px, calc(var(--sh) * 0.023), 20px) / 1 var(--note); color: #4a3520; white-space: nowrap; }
+.lib-item.is-on .lib-name, .lib-item.is-mine .lib-name { color: var(--oxblood); }
+/* draw your own */
+.lib-item--draw .lib-art { background: #1f1a17; }
+.lib-item--draw .lib-art circle { fill: none; stroke: rgba(201, 160, 79, 0.45); stroke-width: 1.2; }
+.lib-item--draw .lib-art path { fill: #c99d45; stroke: none; }
+.lib-item--draw .lib-art .dc { fill: #e07a5f; stroke: none; }
+
+/* ---------- the wall: finished mandalas on a string ---------- */
+.hung-line { position: relative; display: flex; gap: 14px; min-height: 96px; margin-top: 8px; padding: 16px 10px 0; }
+.hung-line::before {
+  content: "";
+  position: absolute;
+  left: -2%;
+  right: -2%;
+  top: 6px;
+  height: 22px;
+  border-top: 1.5px solid #8a6a46;
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  rotate: 180deg;
+  translate: 0 -10px;
+}
+.hung-card { position: relative; width: clamp(64px, calc(var(--sh) * 0.09), 84px); margin: 0; padding: 4px 4px 10px; background: #fbf6e9; box-shadow: 0 8px 10px -6px rgba(60, 40, 10, 0.55); rotate: var(--tilt, 0deg); transform-origin: 50% 0; }
+.hung-card img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; }
+.peg { position: absolute; left: 50%; top: -12px; width: 9px; height: 22px; translate: -50% 0; border-radius: 2px; background: linear-gradient(90deg, #c79b66, #e3bf8c 50%, #b88a55); box-shadow: 0 2px 2px rgba(60, 40, 10, 0.35); }
+.hung-x { position: absolute; right: -8px; top: -8px; width: 20px; height: 20px; border-radius: 50%; background: var(--ink); color: var(--cream); font: 600 13px / 20px var(--label); opacity: 0; transition: opacity 0.2s ease; }
+.hung-card:hover .hung-x, .hung-x:focus-visible { opacity: 1; }
+
+/* ---------- the drawing board ---------- */
+.board {
+  position: relative;
+  justify-self: center;
+  width: min(100%, calc(var(--sh) * 0.66));
+  padding: 16px 16px 12px;
+  border-radius: 6px;
+  background-color: #b98d5f;
+  background-image:
+    repeating-linear-gradient(94deg, rgba(90, 55, 25, 0.12) 0 2px, transparent 2px 9px, rgba(255, 230, 190, 0.08) 9px 11px, transparent 11px 23px),
+    linear-gradient(180deg, #c49a6b, #a87b4d);
+  box-shadow: 0 34px 40px -24px rgba(50, 30, 10, 0.65), 0 2px 4px rgba(50, 30, 10, 0.3), inset 0 1px 0 rgba(255, 235, 200, 0.35);
+  rotate: -0.5deg;
+}
+
+/* the paper, taped on: cream, black with gold lines, or kraft */
+.paper {
+  --ground: #fbf4e4;
+  --line: #3a2c22;
+  position: relative;
+  aspect-ratio: 1;
+  background-color: var(--ground);
+  box-shadow: 0 2px 4px rgba(50, 30, 10, 0.4);
+  clip-path: polygon(0 0.6%, 12% 0, 30% 0.5%, 52% 0, 71% 0.6%, 88% 0.1%, 100% 0.5%, 99.6% 22%, 100% 47%, 99.5% 74%, 100% 100%, 76% 99.5%, 51% 100%, 27% 99.4%, 0 100%, 0.4% 72%, 0 46%, 0.5% 20%);
+  transition: background-color 0.4s ease;
+}
+.paper::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background-image: var(--img-paper, none);
+  background-size: 520px;
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+  pointer-events: none;
+}
+.paper[data-paper="ink"]::after { mix-blend-mode: screen; opacity: 0.07; }
+.paper[data-paper="kraft"]::after { background-image: var(--img-kraft, var(--img-paper, none)); background-size: 300px; opacity: 0.6; }
+.tape {
+  position: absolute;
+  top: -6px;
+  z-index: 4;
+  width: 22%;
+  height: 8%;
+  background: rgba(226, 160, 160, 0.72);
+  background-image: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.18) 0 3px, transparent 3px 9px);
+  clip-path: polygon(0 8%, 4% 0, 8% 10%, 12% 0, 100% 0, 96% 12%, 100% 24%, 96% 38%, 100% 52%, 96% 66%, 100% 80%, 96% 92%, 100% 100%, 0 100%, 4% 86%, 0 72%, 4% 58%, 0 44%, 4% 30%, 0 18%);
+  pointer-events: none;
+}
+.tape--l { left: -3%; rotate: -28deg; }
+.tape--r { right: -3%; rotate: 31deg; background-color: rgba(170, 185, 143, 0.75); }
+.has-tapeRose .tape--l { background: var(--img-tapeRose) center / 100% 100%; clip-path: none; height: auto; aspect-ratio: 5.3; }
+.has-tapeSage .tape--r { background: var(--img-tapeSage) center / 100% 100%; clip-path: none; height: auto; aspect-ratio: 5.3; }
+
+.mandala { position: absolute; inset: 3.5%; width: 93%; height: 93%; overflow: visible; }
+.mandala path {
+  fill: var(--ground);
+  stroke: var(--line);
+  stroke-width: 2.4;
+  stroke-linejoin: round;
+  cursor: pointer;
+  transition: fill 0.32s ease;
+}
+.mandala .md-rim { fill: none; stroke: var(--line); stroke-width: 3; }
+.mandala path.is-hot { stroke: #c9a04f; stroke-width: 5; }
+.paper[data-paper="ink"] .mandala path.is-hot { stroke: #f3e9d4; }
+.paper.is-spinning .mandala { animation: spin-once 3.4s cubic-bezier(0.5, 0, 0.2, 1); }
+@keyframes spin-once { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+/* a little stamp when every piece is coloured */
+.paper::before {
+  content: "finished";
+  position: absolute;
+  left: 4%;
+  bottom: 4%;
+  z-index: 3;
+  padding: 5px 10px 3px;
+  border: 2px solid currentColor;
+  border-radius: 4px;
+  font: 700 11px / 1 var(--label);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(142, 42, 51, 0.82);
+  rotate: -8deg;
+  opacity: 0;
+  scale: 1.6;
+  transition: opacity 0.3s ease, scale 0.3s cubic-bezier(0.2, 1.4, 0.4, 1);
+  pointer-events: none;
+}
+.paper[data-paper="ink"]::before { color: rgba(233, 196, 106, 0.85); }
+.paper.is-done::before { opacity: 1; scale: 1; transition-delay: 1.2s; }
+
+/* draw your own */
+#pad { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: crosshair; }
+.pad-guides { position: absolute; inset: 3.5%; width: 93%; height: 93%; z-index: 1; pointer-events: none; }
+.pad-guides line, .pad-guides circle { fill: none; stroke: var(--line); stroke-width: 1.2; stroke-dasharray: 4 8; opacity: 0.22; }
+.paper-name { position: absolute; right: 14px; bottom: 8px; z-index: 3; font: 400 24px / 1 var(--note); color: var(--oxblood); pointer-events: none; }
+.paper[data-paper="ink"] .paper-name { color: #e9c46a; }
+
+/* ---------- the colour stories, the paint tin, the tools ---------- */
+.toolbar { margin-top: 12px; }
+.stories { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding: 2px 2px 4px; }
+.stories::-webkit-scrollbar { display: none; }
+.story {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 9px 5px 6px;
+  border-radius: 3px;
+  background: rgba(251, 246, 233, 0.85);
+  box-shadow: 0 2px 3px rgba(60, 40, 10, 0.25);
+  transition: transform 0.2s var(--ease), background 0.2s ease;
+}
+.story:hover { transform: translateY(-2px); }
+.story[aria-pressed="true"] { background: #fbf6e9; box-shadow: 0 0 0 2px var(--ink), 0 2px 3px rgba(60, 40, 10, 0.25); }
+.story-sw { display: flex; height: 16px; }
+.story-sw i { width: 6px; height: 100%; }
+.story-name { font: 400 17px / 1 var(--note); color: #3a2614; white-space: nowrap; }
+
+.pots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 8px;
+  padding: 8px 10px;
+  border: 2px solid #d9cdb6;
+  border-radius: 14px;
+  background: #f6f0e4;
+  box-shadow: inset 0 2px 4px rgba(60, 40, 10, 0.18), 0 3px 4px rgba(60, 40, 10, 0.25);
+}
+.pot {
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  background: var(--c);
+  box-shadow: inset 0 -4px 5px rgba(0, 0, 0, 0.22), inset 0 3px 3px rgba(255, 255, 255, 0.35), 0 0 0 2px #e4d9c4;
+  transition: transform 0.2s var(--ease);
+}
+.pot:hover { transform: scale(1.12); }
+.pot[aria-pressed="true"] { transform: scale(1.12) translateY(-2px); box-shadow: inset 0 -4px 5px rgba(0, 0, 0, 0.22), inset 0 3px 3px rgba(255, 255, 255, 0.35), 0 0 0 2px #f6f0e4, 0 0 0 4px var(--ink); }
+.pot--gold { background: linear-gradient(135deg, #e6c574 0 18%, #c99d45 30%, #f0d78e 46%, #b8893a 62%, #d9b25c 80%, #a77b2e); }
+.pot--rub { background: linear-gradient(135deg, #fbf4e4 0 44%, #e3a7a5 44% 56%, #fbf4e4 56%); }
+
+.tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-top: 10px; }
+.tools--end { justify-content: flex-end; gap: 8px; }
+.tools .segs { background: rgba(255, 250, 241, 0.6); }
+.tool {
+  padding: 4px 0 3px;
+  border-bottom: 1px solid rgba(36, 27, 21, 0.55);
+  font: 600 10px / 1 var(--label);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: #2b1d12;
+}
+.tool:hover { color: var(--oxblood); border-color: var(--oxblood); }
+.papers { display: flex; gap: 5px; }
+.paper-dot { width: 22px; height: 22px; border-radius: 3px; box-shadow: 0 0 0 1px rgba(36, 27, 21, 0.4); }
+.paper-dot--cream { background: #fbf4e4; }
+.paper-dot--ink { background: linear-gradient(135deg, #1f1a17 60%, #c9a04f 60% 66%, #1f1a17 66%); }
+.paper-dot--kraft { background: #d9bf93; }
+.paper-dot[aria-pressed="true"] { box-shadow: 0 0 0 2px #fbf6e9, 0 0 0 4px var(--ink); }
+.sizes { display: flex; gap: 4px; }
+.size-dot { width: 28px; height: 28px; display: grid; place-items: center; border: 1px solid rgba(36, 27, 21, 0.3); background: rgba(255, 255, 255, 0.45); }
+.size-dot span { display: block; border-radius: 50%; background: var(--ink); }
+.size-dot[aria-pressed="true"] { background: var(--ink); }
+.size-dot[aria-pressed="true"] span { background: var(--cream); }
+
+/* which tools show: colouring a mandala, or drawing her own */
+.studio.is-draw .only-mandala { display: none; }
+.studio:not(.is-draw) .only-draw { display: none; }
+
+/* ---------- phones ---------- */
+@media (max-width: 760px) {
+  .studio-layout { grid-template-columns: minmax(0, 1fr); align-content: start; gap: 10px; padding: 4.5% 4.5% 15%; }
+  .studio-side { gap: 6px; }
+  .studio .lock-script { font-size: calc(var(--sw) * 0.11); }
+  .studio .lock-caps { font-size: calc(var(--sw) * 0.07); }
+  .studio .lock-note, .library .slip-label, .hung { display: none; }
+  .lib-grid {
+    display: flex;
+    gap: 2px;
+    max-width: none;
+    margin: 0 -4.5vw;
+    padding: 2px 4.5vw 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .lib-grid::-webkit-scrollbar { display: none; }
+  .lib-item { flex: none; width: 64px; }
+  .lib-art { width: 50px; }
+  .lib-name { font-size: 14px; }
+  .board { width: 100%; padding: 9px 9px 8px; rotate: none; }
+  .paper-name { font-size: 18px; }
+  .toolbar { margin-top: 8px; }
+  .story { padding: 4px 7px 4px 5px; }
+  .story-name { font-size: 15px; }
+  .story-sw { height: 13px; }
+  .story-sw i { width: 5px; }
+  .pots { gap: 5px; padding: 6px 7px; margin-top: 6px; }
+  .pot { width: 22px; height: 22px; }
+  .tools { gap: 7px 10px; margin-top: 7px; }
+  .tools--end { margin-top: 6px; }
+  .seg { padding: 8px 9px; font-size: 9px; letter-spacing: 0.12em; }
+  .tool { font-size: 9px; letter-spacing: 0.12em; }
+  .tools .btn--small { padding: 9px 11px; font-size: 9.5px; }
+  .paper-dot { width: 20px; height: 20px; }
+}
+
+/* ---------- optional art: the studio's art supplies, once that picture is saved ---------- */
+.studio-props {
+  display: none;
+  position: absolute;
+  left: 3%;
+  bottom: 8%;
+  z-index: 1;
+  height: 20%;
+  aspect-ratio: 1;
+  background: var(--img-studioProps) center bottom / contain no-repeat;
+  filter: drop-shadow(0 14px 12px rgba(60, 40, 10, 0.32));
+  pointer-events: none;
+}
+.has-studioProps .studio-props { display: block; }
+@media (max-width: 760px) {
+  .has-studioProps .studio-props { display: none; }
+}

@@ -2,17 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>For Didi</title>
   <meta name="description" content="A birthday house for Didi, made to be looked after." />
+  <meta name="theme-color" content="#3f4630" />
+  <link rel="icon" href="data:," />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Pinyon+Script&family=Reenie+Beanie&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css?v=42" />
+  <!-- a Korean handwriting font, only for the few Korean words in the journal (안녕하세요, 잘 지내셨어, 월요일 안녕) -->
+  <link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&text=%EB%82%B4%EB%85%95%EC%84%B8%EC%85%A8%EC%95%88%EC%96%B4%EC%9A%94%EC%9B%94%EC%9D%BC%EC%9E%98%EC%A7%80%ED%95%98&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/house.css?v=52" />
+  <link rel="stylesheet" href="css/rooms.css?v=52" />
+  <link rel="stylesheet" href="css/journal.css?v=52" />
+  <link rel="stylesheet" href="css/games.css?v=52" />
+  <link rel="stylesheet" href="css/studio.css?v=52" />
   <noscript><style>.gate { display: none !important; }</style></noscript>
 </head>
 <body>
-  <!-- LOADING GATE: "select all squares with birthday girl" -->
+  <!-- THE GATE: "select all squares with birthday girl" -->
   <div class="gate" id="gate" role="dialog" aria-modal="true" aria-labelledby="gate-title">
     <div class="gate-loader" aria-hidden="true">
       <p class="gate-loading">loading birthday girl</p>
@@ -35,463 +43,613 @@
     </div>
   </div>
 
-  <div class="grain" aria-hidden="true"></div>
-  <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+  <!-- the length of the walk: this is what the page scrolls. The house itself never moves. -->
+  <div class="walk" id="walk" aria-hidden="true"></div>
 
-  <header class="topbar">
-    <a class="brand" href="#cover">for Didi</a>
-    <nav class="rooms" aria-label="Rooms in the house">
-      <a href="#welcome">Entrance</a>
-      <a href="#hallway">Hallway</a>
-      <a href="#vanity">Vanity</a>
-      <a href="#record">Songs</a>
-      <a href="#book">Book</a>
-      <a href="#library">Library</a>
-      <a href="#rooftop">Rooftop</a>
-      <a href="#cake">Cake</a>
-    </nav>
-  </header>
+  <main class="house" id="house">
 
-  <main>
-    <!-- 00. THE INVITATION: painted backdrop, the house in an arch -->
-    <section class="cover" id="cover">
-      <div class="cover-sticky">
-        <div class="cover-bg" aria-hidden="true"></div>
-        <div class="cover-content">
-          <p class="invite">you're invited to</p>
-          <div class="arch-stack">
-            <div class="dream-house" id="dream-house">
-              <img id="dream-house-img" alt="" />
-              <div class="dream-house-open" aria-hidden="true"></div>
-              <svg class="arc" viewBox="0 0 400 400" aria-hidden="true" focusable="false">
-                <defs>
-                  <path id="arc-path" d="M 7 173 A 193 166 0 0 1 393 173" />
-                </defs>
-                <text class="arc-text"><textPath id="arc-label" href="#arc-path" startOffset="50%" text-anchor="middle"></textPath></text>
-              </svg>
+    <!-- 1. OUTSIDE: the invitation, the house in an arch, and the front door -->
+    <section class="scene outside" id="outside" data-where="outside, by the house" data-room="Outside">
+      <div class="cam">
+        <div class="outside-bg" aria-hidden="true"></div>
+        <div class="house-window" id="house-window" aria-hidden="true">
+          <div class="house-cam" id="house-cam">
+            <img class="house-img" id="house-img" alt="" />
+            <div class="house-door">
+              <div class="house-leaf" id="house-leaf"><span class="house-leaf-shade" id="house-leaf-shade"></span></div>
             </div>
-            <h1 class="hero-name" id="hero-name"></h1>
           </div>
-          <p class="hero-sub" id="hero-sub"></p>
-          <a class="details" href="#welcome">details <span aria-hidden="true">&rarr;</span></a>
+          <div class="house-dark" id="house-dark"></div>
         </div>
-        <div class="cover-deco cover-deco--a" id="deco-a" aria-hidden="true"></div>
-        <div class="cover-deco cover-deco--b" id="deco-b" aria-hidden="true"></div>
-        <div class="stamp" aria-hidden="true">
+        <div class="invite" id="invite">
+          <p class="kicker" id="hero-kicker"></p>
+          <div class="arch-slot" id="arch-slot">
+            <span class="arch-rim" id="arch-rim"></span>
+            <svg class="arc" id="arc" aria-hidden="true" focusable="false">
+              <defs><path id="arc-path" d="" /></defs>
+              <text class="arc-text"><textPath id="arc-label" href="#arc-path" startOffset="50%" text-anchor="middle"></textPath></text>
+            </svg>
+          </div>
+          <h1 class="hero-name" id="hero-name"></h1>
+          <p class="hero-sub" id="hero-sub"></p>
+          <button class="come-in" id="come-in" type="button">
+            <svg viewBox="0 0 24 44" aria-hidden="true"><circle cx="12" cy="9" r="6.5"/><circle cx="12" cy="9" r="2.2"/><path d="M12 15.5V40M12 31h6M12 37h4.5"/></svg>
+            <span>come in</span>
+          </button>
+        </div>
+        <div class="stamp" id="stamp" aria-hidden="true">
           <span class="stamp-big" id="stamp-big"></span>
           <span class="stamp-small" id="stamp-small"></span>
         </div>
+        <span class="deco deco-a p2" id="deco-a" aria-hidden="true"></span>
+        <span class="deco deco-b p3" id="deco-b" aria-hidden="true"></span>
       </div>
     </section>
 
-    <!-- 01. THE FRONT DOOR: lights, lanterns, plants, the mat, and the letter -->
-    <section class="welcome" id="welcome" data-reveal>
-      <div class="welcome-head">
-        <h2>Welcome <em>home.</em></h2>
-        <p class="lead">Nobody rushes you through this house. Walk slowly.</p>
-      </div>
-      <div class="entry-grid">
-        <div class="door-scene">
-          <svg class="door-svg" viewBox="0 0 420 560" role="img" aria-label="A front door with string lights, lanterns, two plants and a welcome mat">
-            <rect width="420" height="560" rx="6" fill="#e6d7b9"/>
-            <rect x="0" y="500" width="420" height="60" fill="#cdb68d"/>
-            <!-- string lights -->
-            <path d="M0 40 Q210 110 420 40" fill="none" stroke="#5b4d40" stroke-width="2"/>
-            <g class="bulb-g" style="--d:0s"><circle cx="42" cy="58.6" r="9" fill="#f6d68a" opacity="0.25"/><circle cx="42" cy="58.6" r="4.5" fill="#f6d68a"/></g>
-            <g class="bulb-g" style="--d:0.4s"><circle cx="84" cy="68.4" r="9" fill="#f6d68a" opacity="0.25"/><circle cx="84" cy="68.4" r="4.5" fill="#f6d68a"/></g>
-            <g class="bulb-g" style="--d:0.8s"><circle cx="126" cy="75.4" r="9" fill="#f6d68a" opacity="0.25"/><circle cx="126" cy="75.4" r="4.5" fill="#f6d68a"/></g>
-            <g class="bulb-g" style="--d:1.2s"><circle cx="168" cy="79.6" r="9" fill="#f6d68a" opacity="0.25"/><circle cx="168" cy="79.6" r="4.5" fill="#f6d68a"/></g>
-            <g class="bulb-g" style="--d:0.3s"><circle cx="210" cy="81" r="9" fill="#f6d68a" opacity="0.25"/><circle cx="210" cy="81" r="4.5" fill="#f6d68a"/></g>
-            <g class="bulb-g" style="--d:0.9s"><circle cx="252" cy="79.6" r="9" fill="#f6d68a" opacity="0.25"/><circle cx="252" cy="79.6" r="4.5" fill="#f6d68a"/></g>
-            <g class="bulb-g" style="--d:1.5s"><circle cx="294" cy="75.4" r="9" fill="#f6d68a" opacity="0.25"/><circle cx="294" cy="75.4" r="4.5" fill="#f6d68a"/></g>
-            <g class="bulb-g" style="--d:0.6s"><circle cx="336" cy="68.4" r="9" fill="#f6d68a" opacity="0.25"/><circle cx="336" cy="68.4" r="4.5" fill="#f6d68a"/></g>
-            <g class="bulb-g" style="--d:1.1s"><circle cx="378" cy="58.6" r="9" fill="#f6d68a" opacity="0.25"/><circle cx="378" cy="58.6" r="4.5" fill="#f6d68a"/></g>
-            <!-- door surround and door -->
-            <path d="M136 500 V236 Q136 146 210 146 Q284 146 284 236 V500 Z" fill="#c9b48c"/>
-            <path d="M150 500 V240 Q150 160 210 160 Q270 160 270 240 V500 Z" fill="#5c1c23"/>
-            <path d="M164 214 Q164 176 210 176 Q256 176 256 214 Z" fill="#f6d68a"/>
-            <path d="M210 176 V214 M186 186 L196 214 M234 186 L224 214" stroke="#5c1c23" stroke-width="3"/>
-            <rect x="166" y="234" width="88" height="104" rx="4" fill="none" stroke="#431419" stroke-width="4"/>
-            <rect x="166" y="356" width="88" height="128" rx="4" fill="none" stroke="#431419" stroke-width="4"/>
-            <!-- wreath -->
-            <circle cx="210" cy="286" r="22" fill="none" stroke="#56603d" stroke-width="9" stroke-dasharray="4 4"/>
-            <circle cx="210" cy="286" r="22" fill="none" stroke="#7d8a55" stroke-width="2"/>
-            <circle cx="252" cy="380" r="6" fill="#dcbf7d"/>
-            <!-- lanterns hanging from the cord -->
-            <g transform="translate(36 76)">
-              <line x1="30" y1="-18" x2="30" y2="14" stroke="#5b4d40" stroke-width="1.5"/>
-              <ellipse cx="30" cy="60" rx="46" ry="58" fill="#f6d68a" opacity="0.2"/>
-              <path d="M22 14 Q30 4 38 14" fill="none" stroke="#b28c4a" stroke-width="3"/>
-              <rect x="16" y="14" width="28" height="6" rx="2" fill="#b28c4a"/>
-              <rect x="14" y="20" width="32" height="68" rx="4" fill="#f6d68a"/>
-              <rect x="14" y="20" width="32" height="68" rx="4" fill="none" stroke="#b28c4a" stroke-width="3"/>
-              <line x1="30" y1="20" x2="30" y2="88" stroke="#b28c4a" stroke-width="2"/>
-              <rect x="16" y="88" width="28" height="6" rx="2" fill="#b28c4a"/>
-              <path d="M22 94 L30 106 L38 94 Z" fill="#b28c4a"/>
-            </g>
-            <g transform="translate(324 76)">
-              <line x1="30" y1="-18" x2="30" y2="14" stroke="#5b4d40" stroke-width="1.5"/>
-              <ellipse cx="30" cy="60" rx="46" ry="58" fill="#f6d68a" opacity="0.2"/>
-              <path d="M22 14 Q30 4 38 14" fill="none" stroke="#b28c4a" stroke-width="3"/>
-              <rect x="16" y="14" width="28" height="6" rx="2" fill="#b28c4a"/>
-              <rect x="14" y="20" width="32" height="68" rx="4" fill="#f6d68a"/>
-              <rect x="14" y="20" width="32" height="68" rx="4" fill="none" stroke="#b28c4a" stroke-width="3"/>
-              <line x1="30" y1="20" x2="30" y2="88" stroke="#b28c4a" stroke-width="2"/>
-              <rect x="16" y="88" width="28" height="6" rx="2" fill="#b28c4a"/>
-              <path d="M22 94 L30 106 L38 94 Z" fill="#b28c4a"/>
-            </g>
-            <!-- plants either side of the step -->
-            <g transform="translate(14 330)">
-              <g fill="#4f6b3a">
-                <ellipse cx="46" cy="60" rx="26" ry="14" transform="rotate(-35 46 60)"/>
-                <ellipse cx="78" cy="54" rx="26" ry="14" transform="rotate(35 78 54)"/>
-                <ellipse cx="60" cy="34" rx="20" ry="30"/>
-                <ellipse cx="34" cy="92" rx="22" ry="12" transform="rotate(-20 34 92)"/>
-                <ellipse cx="86" cy="90" rx="22" ry="12" transform="rotate(20 86 90)"/>
-              </g>
-              <ellipse cx="60" cy="50" rx="10" ry="22" fill="#6b8a4c"/>
-              <path d="M28 112 H92 L84 166 H36 Z" fill="#9c5a3c"/>
-              <rect x="24" y="104" width="72" height="12" rx="3" fill="#b06a47"/>
-            </g>
-            <g transform="translate(286 330)">
-              <g fill="none" stroke="#4f6b3a" stroke-width="2.5">
-                <path d="M60 108 C50 80 40 60 22 40"/><path d="M60 108 C60 80 62 50 58 18"/>
-                <path d="M60 108 C70 80 84 60 102 44"/><path d="M60 108 C48 92 34 88 16 94"/>
-                <path d="M60 108 C72 92 86 90 104 98"/>
-              </g>
-              <g fill="#6b8a4c">
-                <ellipse cx="30" cy="54" rx="11" ry="5" transform="rotate(-40 30 54)"/>
-                <ellipse cx="42" cy="70" rx="11" ry="5" transform="rotate(-30 42 70)"/>
-                <ellipse cx="56" cy="36" rx="9" ry="4" transform="rotate(-80 56 36)"/>
-                <ellipse cx="90" cy="60" rx="11" ry="5" transform="rotate(35 90 60)"/>
-                <ellipse cx="78" cy="76" rx="11" ry="5" transform="rotate(30 78 76)"/>
-              </g>
-              <path d="M28 112 H92 L84 166 H36 Z" fill="#c7825e"/>
-              <rect x="24" y="104" width="72" height="12" rx="3" fill="#d89a78"/>
-            </g>
-            <!-- the mat -->
-            <rect x="150" y="512" width="120" height="28" rx="3" fill="#8a4a3a"/>
-            <text x="210" y="531" text-anchor="middle" font-family="Cormorant Garamond, Garamond, serif" font-style="italic" font-size="17" fill="#efe6d2">hello</text>
-          </svg>
+    <!-- 2. THE FRONT HALL: the letter -->
+    <section class="scene entrance" id="entrance" data-where="the front hall" data-room="The letter">
+      <div class="cam">
+        <div class="hall-bg" id="hall-bg" aria-hidden="true"><img id="hall-img" alt="" /></div>
+        <div class="hall-shade" aria-hidden="true"></div>
+        <div class="hall-front" id="hall-front">
+          <p class="hall-script arrive d1" aria-hidden="true">Welcome home</p>
+          <div class="letter-set" id="letter-set">
+            <div class="envelope arrive d1" aria-hidden="true">
+              <span class="env-back"></span>
+              <span class="env-flap"></span>
+              <span class="env-front"></span>
+            </div>
+            <article class="letter arrive d2">
+              <span class="tape tape--top" aria-hidden="true"></span>
+              <p class="greet" id="letter-greeting"></p>
+              <div id="letter-body"></div>
+              <p class="sign" id="letter-sign"></p>
+            </article>
+            <span class="seal arrive d3" aria-hidden="true"><i>N</i></span>
+          </div>
+          <p class="hall-note arrive">Nobody rushes you through this house. Walk slowly.</p>
         </div>
-        <article class="letter">
-          <span class="seal" aria-hidden="true">N</span>
-          <p class="greet" id="letter-greeting"></p>
-          <div id="letter-body"></div>
-          <p class="sign" id="letter-sign"></p>
-        </article>
       </div>
     </section>
 
-    <!-- 02. HALLWAY: the film strip, with plants and lights -->
-    <section class="hallway" id="hallway">
-      <div class="hall-intro">
-        <h2>Little things, <em>in a row.</em></h2>
-        <p class="lead">Scroll sideways through the frames. Every one is a small moment.</p>
-        <span class="dec dec--plant-hall" data-decor="plant"></span>
-      </div>
-      <span class="dec dec--lights-hall" data-decor="lights"></span>
-      <div class="hall-pin" id="hall-pin">
-        <div class="hall-track" id="hall-track"></div>
+    <!-- 3. THE HALLWAY: a wall of frames that slides past as you walk -->
+    <section class="scene hallway" id="hallway" data-where="the hallway" data-room="The hallway">
+      <div class="cam">
+        <div class="wall-track" id="wall-track">
+          <div class="wall wall--plaster" aria-hidden="true"><i class="wall-rail"></i><i class="wall-dado"></i><i class="wall-skirt"></i><i class="wall-floor"></i></div>
+          <header class="wall-title lock">
+            <p class="lock-script">little things,</p>
+            <h2 class="lock-caps">in a row</h2>
+            <p class="lock-note">Keep walking. Every frame is a small moment.</p>
+          </header>
+          <div class="wall-frames" id="wall-frames"></div>
+          <div class="doorway" id="door-vanity" data-label="the vanity" data-beyond="vanity"></div>
+        </div>
       </div>
     </section>
 
-    <!-- 03. THE REEL: a viewmaster disc of slides -->
-    <section class="reel" id="reel" data-reveal>
-      <div class="reel-stage">
-        <div class="disc-wrap">
-          <div class="disc" id="disc" aria-hidden="true"></div>
-          <div class="disc-ring" id="disc-ring"></div>
-          <div class="disc-center" aria-hidden="true">
-            <p class="disc-label" id="reel-label"></p>
-            <p class="disc-title" id="reel-title"></p>
-            <p class="disc-notes" id="reel-notes"></p>
+    <!-- 4. THE VANITY: a mirror that only says kind things -->
+    <section class="scene vanity" id="vanity" data-where="the vanity" data-room="The mirror">
+      <div class="cam">
+        <div class="vanity-bg" aria-hidden="true"></div>
+        <span class="vanity-cloud p2" aria-hidden="true"></span>
+        <div class="vanity-layout">
+          <div class="vanity-panel arrive d1">
+            <span class="panel-dot" aria-hidden="true"></span>
+            <div class="lock">
+              <p class="lock-script">tap the mirror.</p>
+              <h2 class="lock-caps">Believe it</h2>
+            </div>
+            <p class="panel-note">One kind thing for every tap. This mirror only says nice things.</p>
+            <p class="vanity-count" id="mirror-count" aria-live="polite"></p>
+          </div>
+          <div class="mirror-wrap arrive d2">
+            <button class="mirror" id="mirror" type="button" aria-label="Tap the mirror for something kind">
+              <span class="mirror-glass" id="mirror-glass">
+                <span class="mirror-face" id="mirror-face"></span>
+                <span class="mirror-run" aria-hidden="true"><span class="run-track" id="mirror-run"></span></span>
+                <span class="mirror-sheen" aria-hidden="true"></span>
+                <span class="mirror-text" id="mirror-text">tap the mirror</span>
+                <span class="mirror-beyond" id="mirror-beyond" aria-hidden="true"></span>
+              </span>
+              <span class="mirror-frame" aria-hidden="true"></span>
+            </button>
+            <span class="vanity-props" aria-hidden="true"></span>
           </div>
         </div>
       </div>
-      <div class="reel-copy">
-        <h2>Turn the <em>disc.</em></h2>
-        <p class="lead">Scroll to spin it. Tap a slide to read it.</p>
-        <div class="slide-card" aria-live="polite">
-          <p class="slide-no" id="slide-no"></p>
-          <p class="slide-caption" id="slide-caption"></p>
-        </div>
-      </div>
     </section>
 
-    <!-- 04. THE VANITY: a mirror that only says kind things -->
-    <section class="vanity" id="vanity" data-reveal>
-      <div class="vanity-sky" aria-hidden="true">
-        <span class="cloud cloud--a"><i></i><i></i><i></i><i></i></span>
-        <span class="cloud cloud--b"><i></i><i></i><i></i><i></i></span>
-        <span class="cloud cloud--c"><i></i><i></i><i></i><i></i></span>
-        <span class="vanity-satin"></span>
-      </div>
-      <span class="cloud cloud--float" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-      <div class="vanity-copy">
-        <h2>Tap the mirror. <em>Believe it.</em></h2>
-        <p class="lead">One kind thing for every tap. This mirror only says nice things.</p>
-        <p class="vanity-count" id="mirror-count"></p>
-      </div>
-      <div class="mirror-set">
-        <div class="sconces" aria-hidden="true">
-          <span style="--d:0s"></span><span style="--d:0.45s"></span><span style="--d:0.9s"></span><span style="--d:1.35s"></span><span style="--d:0.2s"></span><span style="--d:0.65s"></span><span style="--d:1.1s"></span>
-        </div>
-        <button class="mirror" id="mirror" type="button" aria-label="Tap the mirror for something kind">
-          <svg class="mirror-frame" viewBox="-20 -20 440 570" aria-hidden="true" focusable="false">
-            <defs>
-              <radialGradient id="brass" cx="0.38" cy="0.28" r="0.85">
-                <stop offset="0" stop-color="#eed996"/>
-                <stop offset="0.5" stop-color="#b28c4a"/>
-                <stop offset="1" stop-color="#5e4319"/>
-              </radialGradient>
-              <linearGradient id="glassg" x1="0.1" y1="0" x2="0.5" y2="1">
-                <stop offset="0" stop-color="#fbf4ec"/>
-                <stop offset="0.55" stop-color="#eadacb"/>
-                <stop offset="1" stop-color="#c9ae98"/>
-              </linearGradient>
-            </defs>
-            <path d="M150 4 C160 -34 240 -34 250 4 C232 -12 168 -12 150 4 Z" fill="url(#brass)"/>
-            <circle cx="200" cy="-14" r="9" fill="url(#brass)"/>
-            <path d="M200 0 C330 0 400 110 400 265 C400 420 320 520 200 530 C80 520 0 420 0 265 C0 110 70 0 200 0 Z" fill="url(#brass)"/>
-            <path d="M200 16 C312 16 380 116 380 265 C380 404 306 502 200 512 C94 502 20 404 20 265 C20 116 88 16 200 16 Z" fill="none" stroke="#4b3412" stroke-width="3" opacity="0.55"/>
-            <path d="M200 46 C300 46 352 134 352 268 C352 394 292 484 200 490 C108 484 48 394 48 268 C48 134 100 46 200 46 Z" fill="url(#glassg)"/>
-            <path d="M72 128 C140 74 222 62 306 92 C252 112 168 134 72 128 Z" fill="#ffffff" opacity="0.4"/>
-            <path d="M326 250 C346 312 336 388 304 436 C322 376 328 310 326 250 Z" fill="#ffffff" opacity="0.28"/>
+    <!-- 5. THE LIVING ROOM: songs on a record, and a few of the names -->
+    <section class="scene living" id="living" data-where="the living room" data-room="Songs">
+      <div class="cam">
+        <div class="living-bg" aria-hidden="true"></div>
+        <p class="living-eyebrow arrive" id="record-label"></p>
+        <div class="record-stage arrive d2">
+          <div class="vinyl vinyl--back" aria-hidden="true"></div>
+          <div class="vinyl" id="vinyl">
+            <div class="vinyl-label" id="vinyl-label"></div>
+          </div>
+          <svg class="vinyl-arc" viewBox="0 0 400 400" aria-hidden="true" focusable="false">
+            <defs><path id="vinyl-arc-path" d="M 52 200 A 148 148 0 0 1 348 200" /></defs>
+            <text class="vinyl-text"><textPath href="#vinyl-arc-path" startOffset="50%" text-anchor="middle" id="vinyl-title"></textPath></text>
           </svg>
-          <span class="mirror-run" aria-hidden="true"><span class="run-track" id="mirror-run"></span></span>
-          <span class="mirror-sheen" aria-hidden="true"></span>
-          <span class="mirror-text" id="mirror-text">tap the mirror</span>
-        </button>
-        <span class="dec dec--mirror-vase" data-decor="vase"></span>
+          <div class="stickers" id="stickers"></div>
+          <div class="kraft-note" id="kraft-note"></div>
+        </div>
+        <div class="living-copy arrive d1">
+          <div class="lock">
+            <p class="lock-script">songs</p>
+            <h2 class="lock-caps">on repeat</h2>
+          </div>
+          <ol class="tracks" id="tracks"></ol>
+          <div class="names-strip" id="names-strip">
+            <p class="names-label" id="names-label">and the names she called me</p>
+            <div class="names" id="names"></div>
+          </div>
+        </div>
+        <div class="filmstrip arrive d3" id="filmstrip" aria-hidden="true"></div>
+        <p class="living-foot arrive" aria-hidden="true">side a &nbsp;/&nbsp; play it loud &nbsp;/&nbsp; skip nothing</p>
       </div>
     </section>
 
-    <!-- 05. THE LIVING ROOM: songs on repeat, and a few of the names -->
-    <section class="record" id="record" data-reveal>
-      <div class="record-stage">
-        <div class="vinyl" id="vinyl">
-          <div class="vinyl-label" id="vinyl-label"></div>
+    <!-- 6. THE REEL: a viewmaster disc of slides -->
+    <section class="scene reel" id="reel" data-where="the reel" data-room="The reel">
+      <div class="cam">
+        <div class="reel-bg" aria-hidden="true"></div>
+        <div class="reel-layout">
+          <div class="disc-wrap arrive d2">
+            <div class="disc" id="disc" aria-hidden="true"></div>
+            <div class="disc-ring" id="disc-ring"></div>
+            <div class="disc-center" aria-hidden="true">
+              <p class="disc-label" id="reel-label"></p>
+              <p class="disc-title" id="reel-title"></p>
+              <p class="disc-notes" id="reel-notes"></p>
+            </div>
+          </div>
+          <div class="viewer arrive d1">
+            <div class="lock">
+              <p class="lock-script">turn</p>
+              <h2 class="lock-caps">the disc</h2>
+            </div>
+            <div class="viewer-slide" id="viewer-slide">
+              <span class="viewer-media" id="viewer-media"></span>
+              <span class="viewer-beyond" id="viewer-beyond" aria-hidden="true"></span>
+            </div>
+            <p class="slide-no" id="slide-no" aria-live="polite"></p>
+            <p class="slide-caption" id="slide-caption"></p>
+          </div>
         </div>
-        <!-- the title stays upright while the disc turns underneath it -->
-        <svg class="vinyl-arc" viewBox="0 0 400 400" aria-hidden="true" focusable="false">
-          <defs>
-            <path id="vinyl-arc-path" d="M 46 200 A 154 154 0 0 1 354 200" />
-          </defs>
-          <text class="vinyl-text"><textPath href="#vinyl-arc-path" startOffset="50%" text-anchor="middle" id="vinyl-title"></textPath></text>
-        </svg>
-        <div class="stickers" id="stickers"></div>
-        <div class="kraft-note" id="kraft-note"></div>
       </div>
-      <div class="record-copy">
-        <p class="eyebrow" id="record-label"></p>
-        <h2 id="record-title"></h2>
-        <ol class="tracks" id="tracks"></ol>
-        <div class="names-strip">
-          <p class="names-label">and the names she called me</p>
-          <div class="names" id="names"></div>
-        </div>
-      </div>
-      <span class="dec dec--lamp" data-decor="lamp"></span>
-      <span class="dec dec--plant-living" data-decor="plant"></span>
     </section>
 
-    <!-- 06. THE JOURNAL: an open photo book, turned one half-page at a time -->
-    <section class="book-sec" id="book" data-reveal>
-      <div class="book-head">
-        <h2>Journal</h2>
+    <!-- 7. THE STUDY: the journal, an open book with its pages fanned out behind it -->
+    <section class="scene study" id="study" data-where="the journal" data-room="The journal">
+      <div class="cam">
+        <div class="pan" id="study-pan">
+          <div class="study-bg" aria-hidden="true"></div>
+          <div class="room-body">
+            <header class="jr-head arrive">
+              <h2>Journal</h2>
+              <p class="jr-count"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5C6.5 5 9.5 5 12 6.5V19C9.5 17.5 6.5 17.5 4 19zM12 6.5C14.5 5 17.5 5 20 6.5V19C17.5 17.5 14.5 17.5 12 19"/></svg><span id="jr-count"></span></p>
+            </header>
+            <div class="bk arrive d1" id="bk">
+              <div class="bk-spread" id="bk-spread">
+                <div class="bk-fan bk-fan-l" id="bk-fan-l" aria-hidden="true"></div>
+                <div class="bk-fan bk-fan-r" id="bk-fan-r" aria-hidden="true"></div>
+                <div class="bk-half bk-left" id="bk-left"></div>
+                <div class="bk-half bk-right" id="bk-right"></div>
+                <div class="bk-cast bk-cast-l" aria-hidden="true"></div>
+                <div class="bk-cast bk-cast-r" aria-hidden="true"></div>
+                <div class="bk-spine" aria-hidden="true"></div>
+                <div class="bk-leaf" id="bk-leaf">
+                  <div class="bk-seg bk-seg-in" id="bk-seg-in">
+                    <div class="bk-face bk-front" id="bk-front-in"></div>
+                    <div class="bk-face bk-back" id="bk-back-in"></div>
+                    <div class="bk-seg bk-seg-out" id="bk-seg-out">
+                      <div class="bk-face bk-front" id="bk-front-out"></div>
+                      <div class="bk-face bk-back" id="bk-back-out"></div>
+                    </div>
+                  </div>
+                </div>
+                <button class="bk-cover" id="bk-cover" type="button" aria-label="Open the journal">
+                  <span class="bk-cover-face">
+                    <span class="bk-cover-photo" id="bk-cover-photo"></span>
+                    <span class="bk-cover-title">Journal</span>
+                    <span class="bk-cover-sub" id="bk-cover-sub"></span>
+                  </span>
+                  <span class="bk-cover-inside"></span>
+                </button>
+              </div>
+            </div>
+            <div class="bk-nav arrive d2">
+              <button class="pl-btn" type="button" id="book-prev" aria-label="Turn back">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 6L8.5 12l6 6"/></svg>
+              </button>
+              <p class="book-pages" id="book-pages" aria-live="polite"></p>
+              <button class="pl-btn" type="button" id="book-next" aria-label="Turn forward">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 6l6 6-6 6"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="door-zone">
+            <div class="doorway" id="door-games" data-label="the game table" data-beyond="games"></div>
+          </div>
+        </div>
       </div>
-      <div class="bk" id="bk">
-        <div class="bk-board" aria-hidden="true"></div>
-        <div class="bk-spread" id="bk-spread">
-          <div class="bk-half bk-left" id="bk-left"></div>
-          <div class="bk-half bk-right" id="bk-right"></div>
-          <div class="bk-cast bk-cast-l" aria-hidden="true"></div>
-          <div class="bk-cast bk-cast-r" aria-hidden="true"></div>
-          <div class="bk-spine" aria-hidden="true"></div>
-          <div class="bk-leaf" id="bk-leaf">
-            <div class="bk-seg bk-seg-in" id="bk-seg-in">
-              <div class="bk-face bk-front" id="bk-front-in"></div>
-              <div class="bk-face bk-back" id="bk-back-in"></div>
-              <div class="bk-seg bk-seg-out" id="bk-seg-out">
-                <div class="bk-face bk-front" id="bk-front-out"></div>
-                <div class="bk-face bk-back" id="bk-back-out"></div>
+    </section>
+
+    <!-- 8. THE GAME TABLE: six little games -->
+    <section class="scene games" id="games" data-where="the game table" data-room="Games">
+      <div class="cam">
+        <div class="pan" id="games-pan">
+          <div class="wall wall--damask" aria-hidden="true"><i class="wall-skirt"></i><i class="wall-floor"></i></div>
+          <div class="room-body">
+            <header class="games-head lock arrive">
+              <p class="lock-script">for a brain</p>
+              <h2 class="lock-caps">that never stops</h2>
+              <p class="lock-note">Six little games. No timers, no pressure. Pick one up.</p>
+            </header>
+            <div class="games-wall arrive d2" id="games-wall" aria-hidden="true">
+              <figure class="wframe f-round"><div class="photo"></div></figure>
+              <figure class="wframe f-cream"><div class="photo"></div></figure>
+              <figure class="wframe f-oval"><div class="photo"></div></figure>
+            </div>
+            <div class="table arrive d1">
+              <span class="table-edge" aria-hidden="true"></span>
+              <button class="toy toy--find" type="button" data-game="game-find" data-wide="1">
+                <span class="toy-art" aria-hidden="true"><i class="fphoto" id="toy-find-photo"><i class="fbeam"></i></i><i class="torch"><i class="torch-head"></i><i class="torch-btn"></i></i></span>
+                <span class="toy-name">find Didi</span>
+              </button>
+              <button class="toy toy--spot" type="button" data-game="game-spot" data-wide="1">
+                <span class="toy-art" aria-hidden="true"><i class="pola p1"></i><i class="pola p2"><i class="pmark"></i></i></span>
+                <span class="toy-name">spot the difference</span>
+              </button>
+              <button class="toy toy--memory" type="button" data-game="game-memory">
+                <span class="toy-art" aria-hidden="true"><i class="mcard m1"></i><i class="mcard m2"></i><i class="mcard m3" id="toy-mem-face"></i></span>
+                <span class="toy-name">memory</span>
+              </button>
+              <button class="toy toy--puzzle" type="button" data-game="game-puzzle">
+                <span class="toy-art" aria-hidden="true"><i class="ptiles" id="toy-puzzle"></i></span>
+                <span class="toy-name">in pieces</span>
+              </button>
+              <button class="toy toy--odd" type="button" data-game="game-odd">
+                <span class="toy-art" aria-hidden="true"><i class="card c1"></i><i class="card c2"></i><i class="card c3"><b>?</b><em>which one doesn&rsquo;t belong</em></i><i class="clip"></i></span>
+                <span class="toy-name">the odd one out</span>
+              </button>
+              <button class="toy toy--candles" type="button" data-game="game-candles">
+                <span class="toy-art" aria-hidden="true"><i class="kcake"><i class="kc k1"><i></i></i><i class="kc k2 is-out"><i></i></i><i class="kc k3"><i></i></i><i class="kc k4"><i></i></i><i class="kcake-top"></i><i class="kcake-body"></i></i></span>
+                <span class="toy-name">save the candles</span>
+              </button>
+            </div>
+          </div>
+          <div class="door-zone">
+            <div class="doorway" id="door-studio" data-label="the studio" data-beyond="studio"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. THE STUDIO: a library of mandalas to colour, and a page that makes her drawing a mandala -->
+    <section class="scene studio" id="studio" data-where="the studio" data-room="The studio">
+      <div class="cam">
+        <div class="wall wall--studio" aria-hidden="true"><i class="wall-skirt"></i><i class="wall-floor"></i></div>
+        <span class="studio-props p2" aria-hidden="true"></span>
+        <div class="studio-layout">
+          <div class="studio-side">
+            <div class="lock arrive">
+              <p class="lock-script">one petal</p>
+              <h2 class="lock-caps">at a time</h2>
+              <p class="lock-note">Pick a mandala and a colour, then tap a petal. The colour runs all the way round.</p>
+            </div>
+            <div class="library arrive d1">
+              <p class="slip-label">the library</p>
+              <div class="lib-grid" id="lib-grid"></div>
+            </div>
+            <div class="hung arrive d2" id="hung" hidden>
+              <p class="slip-label">on the wall</p>
+              <div class="hung-line" id="hung-line"></div>
+            </div>
+          </div>
+          <div class="board arrive d2">
+            <div class="paper" id="paper" data-paper="cream">
+              <i class="tape tape--l" aria-hidden="true"></i>
+              <i class="tape tape--r" aria-hidden="true"></i>
+              <svg class="mandala" id="mandala" viewBox="-500 -500 1000 1000" role="img" aria-label="A mandala to colour"></svg>
+              <canvas id="pad" aria-label="A page to draw on; every line is repeated round the middle" hidden></canvas>
+              <svg class="pad-guides" id="pad-guides" viewBox="-500 -500 1000 1000" aria-hidden="true" hidden></svg>
+              <span class="paper-name" id="paper-name" aria-hidden="true"></span>
+            </div>
+            <div class="toolbar">
+              <div class="stories" id="stories" role="group" aria-label="Colour stories"></div>
+              <div class="pots" id="pots" role="group" aria-label="Colours"></div>
+              <div class="tools">
+                <div class="segs only-mandala" role="group" aria-label="What a tap fills">
+                  <button type="button" class="seg is-on" data-fill="ring" aria-pressed="true">the whole ring</button>
+                  <button type="button" class="seg" data-fill="one" aria-pressed="false">just one</button>
+                </div>
+                <div class="segs only-draw" role="group" aria-label="How many times each line repeats">
+                  <button type="button" class="seg" data-folds="6" aria-pressed="false">6</button>
+                  <button type="button" class="seg is-on" data-folds="8" aria-pressed="true">8</button>
+                  <button type="button" class="seg" data-folds="12" aria-pressed="false">12</button>
+                </div>
+                <div class="sizes only-draw" id="sizes" role="group" aria-label="Brush size"></div>
+                <div class="papers" id="papers" role="group" aria-label="Paper"></div>
+                <button class="tool" type="button" id="st-undo">undo</button>
+                <button class="tool only-mandala" type="button" id="st-surprise">colour it for me</button>
+                <button class="tool only-mandala" type="button" id="st-spin">spin it</button>
+                <button class="tool" type="button" id="st-clear">start over</button>
+              </div>
+              <div class="tools tools--end">
+                <button class="btn btn--ghost btn--small" type="button" id="st-hang">Hang it on the wall</button>
+                <button class="btn btn--small" type="button" id="st-save">Save it</button>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="bk-nav">
-        <button class="pl-btn" type="button" id="book-prev" aria-label="Turn back">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 6L8.5 12l6 6"/></svg>
-        </button>
-        <p class="book-pages" id="book-pages" aria-live="polite"></p>
-        <button class="pl-btn" type="button" id="book-next" aria-label="Turn forward">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 6l6 6-6 6"/></svg>
-        </button>
-      </div>
     </section>
 
-    <!-- 07. LIBRARY: the brain teasers -->
-    <section class="library" id="library" data-reveal>
-      <h2>For a brain that <em>never</em> stops.</h2>
-      <p class="lead">Four little games about us. No timers, no pressure.</p>
-
-      <div class="games">
-        <!-- Trip quiz -->
-        <article class="game" id="game-quiz">
-          <header class="game-head">
-            <h3>Our trips, the quiz</h3>
-            <span class="game-num">No. 01</span>
-          </header>
-          <p class="meta" id="quiz-count"></p>
-          <p class="riddle-q" id="quiz-q"></p>
-          <div class="quiz-options" id="quiz-options"></div>
-          <p class="msg" id="quiz-msg" role="status" aria-live="polite"></p>
-          <p class="meta">score <b id="quiz-score">0</b></p>
-          <div class="row">
-            <button class="btn btn--ghost" type="button" id="quiz-next" disabled>Next question</button>
+    <!-- 10. THE ROOFTOP: wishes in the sky, and the cake -->
+    <section class="scene rooftop" id="rooftop" data-where="the rooftop" data-room="The rooftop">
+      <div class="cam">
+        <div class="sky-bg" aria-hidden="true"></div>
+        <div class="sky-night" aria-hidden="true"></div>
+        <div class="sky" id="sky">
+          <span class="lights" id="sky-lights" aria-hidden="true"></span>
+          <div class="wish-card" id="wish-card" aria-live="polite">
+            <p class="slip-label">a wish</p>
+            <p class="wish-text" id="wish-text">Tap a star.</p>
           </div>
-        </article>
-
-        <!-- Memory -->
-        <article class="game" id="game-memory">
-          <header class="game-head">
-            <h3>Memory</h3>
-            <span class="game-num">No. 02</span>
-          </header>
-          <p class="meta">moves <b id="mem-moves">0</b> &middot; pairs <b id="mem-pairs">0</b> of <span id="mem-total">8</span></p>
-          <div class="mem-grid" id="mem-grid"></div>
-          <p class="msg" id="mem-msg" role="status" aria-live="polite"></p>
-          <div class="row">
-            <button class="btn btn--ghost" type="button" id="mem-reset">Shuffle again</button>
+        </div>
+        <div class="roof-copy arrive">
+          <div class="lock">
+            <p class="lock-script">under all</p>
+            <h2 class="lock-caps">the stars</h2>
           </div>
-        </article>
-
-        <!-- Trip order -->
-        <article class="game" id="game-order">
-          <header class="game-head">
-            <h3>Put our trips in order</h3>
-            <span class="game-num">No. 03</span>
-          </header>
-          <p class="meta">Tap the trips from the first one to the latest.</p>
-          <ol class="order-done" id="order-done"></ol>
-          <div class="order-pool" id="order-pool"></div>
-          <p class="msg" id="order-msg" role="status" aria-live="polite"></p>
-          <div class="row">
-            <button class="btn btn--ghost" type="button" id="order-reset">Shuffle again</button>
+          <p class="lock-note">Tap a star for a wish. Then blow out the candle.</p>
+          <div class="cake-controls">
+            <div class="row">
+              <button class="btn" type="button" id="cake-mic">Turn on the mic</button>
+              <button class="btn btn--ghost" type="button" id="cake-tap">Tap the candle</button>
+            </div>
+            <p class="msg" id="cake-msg" role="status" aria-live="polite"></p>
           </div>
-        </article>
-
-        <!-- House puzzle -->
-        <article class="game" id="game-puzzle">
-          <header class="game-head">
-            <h3>The house, in pieces</h3>
-            <span class="game-num">No. 04</span>
-          </header>
-          <p class="meta">Slide the pieces until the house is whole. Moves: <b id="puz-moves">0</b></p>
-          <div class="puzzle" id="puzzle" aria-label="Sliding puzzle of the dream house"></div>
-          <p class="msg" id="puz-msg" role="status" aria-live="polite"></p>
-          <div class="row">
-            <button class="btn btn--ghost" type="button" id="puz-shuffle">Shuffle</button>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <!-- 08. STUDIO: draw something -->
-    <section class="studio" id="studio" data-reveal>
-      <div class="studio-head">
-        <div>
-          <h2>Where the mess <em>is the point.</em></h2>
         </div>
-        <div class="slip">
-          <p class="slip-label">today's prompt</p>
-          <p class="prompt" id="prompt-text"></p>
-          <button class="btn btn--ghost" type="button" id="prompt-next">Another prompt</button>
+        <div class="cake-set arrive d2">
+          <div class="cake-stage" id="cake-stage"></div>
         </div>
-      </div>
-      <span class="dec dec--vase" data-decor="vase"></span>
-
-      <div class="pad-wrap">
-        <div class="toolbar">
-          <div class="swatches" id="swatches" role="group" aria-label="Colors"></div>
-          <div class="sizes" id="sizes" role="group" aria-label="Brush size"></div>
-          <button class="btn btn--ghost" type="button" id="pad-clear">Clear</button>
-          <button class="btn" type="button" id="pad-save">Save my doodle</button>
-        </div>
-        <canvas id="pad" aria-label="Drawing pad"></canvas>
-      </div>
-    </section>
-
-    <!-- 09. ROOFTOP: wishes -->
-    <section class="rooftop" id="rooftop" data-reveal>
-      <div class="rooftop-head">
-        <h2>Under all the <em>stars.</em></h2>
-        <p class="lead">Tap a sparkle for a wish.</p>
-      </div>
-      <div class="sky" id="sky">
-        <span class="dec dec--lights-sky" data-decor="lights"></span>
-        <div class="wish-card" id="wish-card" aria-live="polite">
-          <p class="slip-label">a wish</p>
-          <p class="wish-text" id="wish-text">Tap a sparkle.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- 10. THE CAKE: blow out the candle -->
-    <section class="cake-sec" id="cake" data-reveal>
-      <div class="cake-stage" id="cake-stage"></div>
-      <div class="cake-copy">
-        <h2>Make a <em>wish.</em></h2>
-        <p class="lead">Blow into the microphone and the candle goes out. Or tap it.</p>
-        <div class="row">
-          <button class="btn" type="button" id="cake-mic">Turn on the mic</button>
-          <button class="btn btn--ghost" type="button" id="cake-tap">Tap the candle</button>
-        </div>
-        <p class="msg" id="cake-msg" role="status" aria-live="polite"></p>
         <div class="cake-wish" id="cake-wish" aria-live="polite">
           <p class="slip-label">your wish</p>
           <p class="wish-text" id="cake-wish-text"></p>
         </div>
+        <div class="parapet" aria-hidden="true"></div>
       </div>
     </section>
 
-    <!-- 11. THE DOOR -->
-    <section class="exit" id="exit">
-      <span class="dec dec--lantern-l" data-decor="lantern"></span>
-      <span class="dec dec--lantern-r" data-decor="lantern"></span>
-      <span class="dec dec--fern-l" data-decor="plant"></span>
-      <span class="dec dec--fern-r" data-decor="fern"></span>
-      <div class="exit-glow" id="exit-glow" aria-hidden="true"></div>
-      <div class="door-art" id="door-art" aria-hidden="true">
-        <div class="door-room">
-          <span class="room-window"></span>
-          <span class="room-lamp"></span>
-          <span class="room-rug"></span>
+    <!-- 11. OUTSIDE AGAIN: the door is always open -->
+    <section class="scene goodbye" id="goodbye" data-where="outside again" data-room="The door">
+      <div class="cam">
+        <div class="bye-bg" id="bye-bg" aria-hidden="true"><img id="bye-img" alt="" /></div>
+        <div class="bye-shade" aria-hidden="true"></div>
+        <div class="bye-copy">
+          <div class="lock arrive">
+            <p class="lock-script">the door is</p>
+            <h2 class="lock-caps">always open</h2>
+          </div>
+          <p class="lock-note arrive d1">Come back whenever you need a little more light.</p>
+          <p class="sign arrive d2" id="exit-sign"></p>
+          <button class="btn btn--cream arrive d3" type="button" id="replay">Walk through again</button>
         </div>
-        <div class="door-leaf" id="door-leaf">
-          <span class="door-panel p1"></span>
-          <span class="door-panel p2"></span>
-          <span class="door-knob"></span>
-        </div>
-      </div>
-      <div class="exit-copy" id="exit-copy">
-        <h2>The door is <em>always open.</em></h2>
-        <p class="lead">Come back whenever you need a little more light.</p>
-        <p class="sign" id="exit-sign"></p>
-        <button class="btn" type="button" id="replay">Walk the tour again</button>
       </div>
     </section>
   </main>
 
+  <!-- paper grain over everything -->
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- where you are, and the way on -->
+  <p class="where" id="where" aria-hidden="true"><span>outside, by the house</span></p>
+  <div class="walk-ui" id="walk-ui">
+    <button class="walk-btn" type="button" id="walk-map" aria-label="Rooms in the house" aria-expanded="false" aria-controls="rooms-card">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.5L12 4l8 6.5V20H4z"/><path d="M10 20v-5.5h4V20"/></svg>
+    </button>
+    <button class="walk-btn walk-btn--next" type="button" id="walk-next" aria-label="Walk on to the next room">
+      <span>walk on</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg>
+    </button>
+  </div>
+  <nav class="rooms-card" id="rooms-card" aria-label="Rooms in the house" hidden>
+    <p class="rooms-title">the house</p>
+    <ol id="rooms-list"></ol>
+  </nav>
+
+  <!-- the games, picked up off the table one at a time -->
+  <div class="sheet" id="sheet" hidden>
+    <div class="sheet-card" role="dialog" aria-modal="true" aria-label="A game">
+      <button class="sheet-close" type="button" id="sheet-close">put it back</button>
+
+      <article class="game game--find" id="game-find" hidden>
+        <header class="game-head"><h3>Find Didi</h3><p class="meta"><span id="fd-count"></span> &middot; found <b id="fd-found">0</b></p></header>
+        <p class="game-how">The lights are off. Move the torch around, find yourself, and tap your face.</p>
+        <div class="fd-stage" id="fd-stage">
+          <img class="fd-photo" id="fd-photo" alt="One of our photos, in the dark" draggable="false">
+          <span class="fd-dark" aria-hidden="true"></span>
+          <span class="fd-ring" id="fd-ring" aria-hidden="true" hidden></span>
+        </div>
+        <p class="msg" id="fd-msg" role="status" aria-live="polite"></p>
+        <div class="row">
+          <button class="btn btn--ghost btn--small" type="button" id="fd-lights">Lights on</button>
+          <button class="btn btn--small" type="button" id="fd-next" disabled>Next photo</button>
+        </div>
+      </article>
+
+      <article class="game game--spot" id="game-spot" hidden>
+        <header class="game-head"><h3>Spot the difference</h3><p class="meta"><span id="sp-count"></span> &middot; found <b id="sp-found">0</b> of <span id="sp-total">5</span></p></header>
+        <p class="game-how">Five things changed between these two. Tap them on either picture.</p>
+        <div class="sp-pair" id="sp-pair">
+          <div class="sp-pic"><img id="sp-a" alt="The first picture" draggable="false"><svg class="sp-marks" viewBox="0 0 100 125" preserveAspectRatio="none" aria-hidden="true"></svg></div>
+          <div class="sp-pic"><img id="sp-b" alt="The second picture, with five changes" draggable="false"><svg class="sp-marks" viewBox="0 0 100 125" preserveAspectRatio="none" aria-hidden="true"></svg></div>
+        </div>
+        <p class="msg" id="sp-msg" role="status" aria-live="polite"></p>
+        <div class="row">
+          <button class="btn btn--ghost btn--small" type="button" id="sp-hint">Show me one</button>
+          <button class="btn btn--small" type="button" id="sp-next" disabled>Next picture</button>
+        </div>
+      </article>
+
+      <article class="game game--memory" id="game-memory" hidden>
+        <header class="game-head"><h3>Memory</h3><p class="meta">moves <b id="mem-moves">0</b> &middot; pairs <b id="mem-pairs">0</b> of <span id="mem-total">8</span> <span class="meta-best" id="mem-best"></span></p></header>
+        <div class="mem-grid" id="mem-grid"></div>
+        <p class="msg" id="mem-msg" role="status" aria-live="polite"></p>
+        <div class="row">
+          <button class="btn btn--ghost btn--small" type="button" id="mem-reset">Shuffle again</button>
+        </div>
+      </article>
+
+      <article class="game game--puzzle" id="game-puzzle" hidden>
+        <header class="game-head"><h3>In pieces</h3><p class="meta">Tap a piece next to the gap to slide it. Moves: <b id="puz-moves">0</b></p></header>
+        <div class="puz-opts">
+          <div class="segs" id="puz-size" role="group" aria-label="Size">
+            <button type="button" class="seg is-on" data-n="3" aria-pressed="true">3 &times; 3</button>
+            <button type="button" class="seg" data-n="4" aria-pressed="false">4 &times; 4</button>
+          </div>
+          <div class="puz-pics" id="puz-pics" role="group" aria-label="Picture"></div>
+        </div>
+        <div class="puzzle" id="puzzle" aria-label="Sliding puzzle"><span class="puz-peek" id="puz-peek" aria-hidden="true"></span></div>
+        <p class="msg" id="puz-msg" role="status" aria-live="polite"></p>
+        <div class="row">
+          <button class="btn btn--ghost btn--small" type="button" id="puz-peek-btn">Hold to peek</button>
+          <button class="btn btn--ghost btn--small" type="button" id="puz-shuffle">Shuffle</button>
+        </div>
+      </article>
+
+      <article class="game game--odd" id="game-odd" hidden>
+        <header class="game-head"><h3>The odd one out</h3><p class="meta"><span id="odd-count"></span> &middot; <b id="odd-score">0</b> on the first try</p></header>
+        <p class="game-how">Which one doesn&rsquo;t belong?</p>
+        <div class="odd-grid" id="odd-grid"></div>
+        <p class="odd-why" id="odd-why" aria-live="polite"></p>
+        <p class="msg" id="odd-msg" role="status" aria-live="polite"></p>
+        <div class="row row--end">
+          <button class="btn btn--small" type="button" id="odd-next" disabled>Next four</button>
+        </div>
+      </article>
+
+      <article class="game game--candles" id="game-candles" hidden>
+        <header class="game-head"><h3>Save the candles</h3><p class="meta"><span id="cd-count"></span> &middot; saved <b id="cd-saved">0</b></p></header>
+        <p class="game-how">Guess the word one letter at a time. Every wrong letter blows a candle out.</p>
+        <div class="cd-cake" id="cd-cake" aria-hidden="true">
+          <div class="cd-candles" id="cd-candles"></div>
+          <span class="cd-top"></span>
+          <span class="cd-body"></span>
+          <span class="cd-plate"></span>
+        </div>
+        <p class="cd-hint" id="cd-hint"></p>
+        <div class="cd-word" id="cd-word" aria-live="polite"></div>
+        <div class="cd-keys" id="cd-keys" role="group" aria-label="Letters"></div>
+        <p class="msg" id="cd-msg" role="status" aria-live="polite"></p>
+        <div class="row row--end">
+          <button class="btn btn--small" type="button" id="cd-next" disabled>Next word</button>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <!-- PUT AWAY FOR NOW: the games that ask about our trips. Nothing in a <template> shows or runs.
+       To bring one back, move its toy into the table and its article into the sheet above. -->
+  <template id="games-put-away">
+              <button class="toy toy--quiz" type="button" data-game="game-quiz">
+                <span class="toy-art" aria-hidden="true"><i class="card c1"></i><i class="card c2"></i><i class="card c3"><b>Q.</b><em>where did we go first?</em></i><i class="clip"></i></span>
+                <span class="toy-name">our trips, the quiz</span>
+              </button>
+              <button class="toy toy--order" type="button" data-game="game-order">
+                <span class="toy-art" aria-hidden="true"><i class="ticket t1"><b>01</b></i><i class="ticket t2"><b>02</b></i><i class="ticket t3"><b>03</b></i></span>
+                <span class="toy-name">put our trips in order</span>
+              </button>
+              <button class="toy toy--cross" type="button" data-game="game-cross" data-wide="1">
+                <span class="toy-art" aria-hidden="true"><i class="cwpaper"><i class="cwmini" id="toy-cross"></i></i><i class="pencil"></i></span>
+                <span class="toy-name">the little crossword</span>
+              </button>
+              <button class="toy toy--words" type="button" data-game="game-words">
+                <span class="toy-art" aria-hidden="true"><i class="ltile l1">D</i><i class="ltile l2">I</i><i class="ltile l3">D</i><i class="ltile l4">I</i></span>
+                <span class="toy-name">untangle</span>
+              </button>
+      <article class="game game--quiz" id="game-quiz" hidden>
+        <header class="game-head"><h3>Our trips, the quiz</h3><p class="meta" id="quiz-count"></p></header>
+        <ol class="quiz-stars" id="quiz-stars" aria-label="Gold stars for first tries"></ol>
+        <div class="quiz-card" id="quiz-card">
+          <p class="riddle-q" id="quiz-q"></p>
+          <div class="quiz-options" id="quiz-options"></div>
+        </div>
+        <div class="quiz-reveal" id="quiz-reveal" hidden>
+          <figure class="quiz-photo" id="quiz-photo"></figure>
+          <p class="quiz-note" id="quiz-note"></p>
+        </div>
+        <div class="cert" id="quiz-cert" hidden>
+          <p class="cert-kicker">certificate of remembering</p>
+          <p class="cert-to">awarded to</p>
+          <p class="cert-name">Didi</p>
+          <div class="cert-stars" id="cert-stars"></div>
+          <p class="cert-score" id="cert-score"></p>
+          <p class="cert-line" id="cert-line"></p>
+          <p class="cert-sign" id="cert-sign"></p>
+          <span class="cert-seal" aria-hidden="true"><i>N</i></span>
+        </div>
+        <p class="msg" id="quiz-msg" role="status" aria-live="polite"></p>
+        <div class="row row--end">
+          <button class="btn btn--small" type="button" id="quiz-next" disabled>Next question</button>
+        </div>
+      </article>
+
+      <article class="game game--order" id="game-order" hidden>
+        <header class="game-head"><h3>Put our trips in order</h3><p class="meta">Tap the trips from the first to the latest. The train takes you there.</p></header>
+        <div class="route" id="route"></div>
+        <div class="order-pool" id="order-pool"></div>
+        <p class="msg" id="order-msg" role="status" aria-live="polite"></p>
+        <div class="row">
+          <button class="btn btn--ghost btn--small" type="button" id="order-reset">Start again</button>
+        </div>
+      </article>
+
+      <article class="game game--cross" id="game-cross" hidden>
+        <header class="game-head"><h3>The little crossword</h3><p class="meta">Tap a square and type. Tap it again to turn the word the other way.</p></header>
+        <p class="cw-current" id="cw-current" aria-live="polite"></p>
+        <div class="cw-wrap">
+          <div class="cw-grid" id="cw-grid"></div>
+          <div class="cw-clues">
+            <p class="slip-label">across</p><ol id="cw-across"></ol>
+            <p class="slip-label">down</p><ol id="cw-down"></ol>
+          </div>
+        </div>
+        <p class="msg" id="cw-msg" role="status" aria-live="polite"></p>
+        <div class="row">
+          <button class="btn btn--ghost btn--small" type="button" id="cw-hint">Show a letter</button>
+          <button class="btn btn--ghost btn--small" type="button" id="cw-check">Check</button>
+          <button class="btn btn--ghost btn--small" type="button" id="cw-reset">Clear</button>
+        </div>
+      </article>
+
+      <article class="game game--words" id="game-words" hidden>
+        <header class="game-head"><h3>Untangle</h3><p class="meta" id="un-count"></p></header>
+        <p class="un-hint" id="un-hint"></p>
+        <div class="un-slots" id="un-slots"></div>
+        <div class="un-pool" id="un-pool"></div>
+        <p class="msg" id="un-msg" role="status" aria-live="polite"></p>
+        <div class="row">
+          <button class="btn btn--ghost btn--small" type="button" id="un-shuffle">Mix again</button>
+          <button class="btn btn--ghost btn--small" type="button" id="un-skip">Show me</button>
+          <button class="btn btn--small" type="button" id="un-next" disabled>Next word</button>
+        </div>
+      </article>
+  </template>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <script src="js/content.js?v=21"></script>
-  <script src="js/art.js?v=13"></script>
-  <script src="js/games.js?v=10"></script>
-  <script src="js/journal.js?v=18"></script>
-  <script src="js/app.js?v=18"></script>
-  <script src="js/rooms.js?v=12"></script>
+  <script src="js/content.js?v=52"></script>
+  <script src="js/art.js?v=52"></script>
+  <script src="js/games.js?v=52"></script>
+  <script src="js/studio.js?v=52"></script>
+  <script src="js/journal.js?v=52"></script>
+  <script src="js/house.js?v=52"></script>
 </body>
 </html>

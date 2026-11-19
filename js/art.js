@@ -155,6 +155,11 @@
   /* ---------- the cake and its candle ---------- */
   const CAKE =
     '<svg viewBox="0 0 320 330" aria-hidden="true" focusable="false" class="cake-svg" overflow="visible">' +
+    // a white cut edge round the whole cake, like the stickers
+    '<g fill="#fbf6ea" stroke="#fbf6ea" stroke-width="12" stroke-linejoin="round">' +
+    '<ellipse cx="160" cy="300" rx="150" ry="18"/><rect x="58" y="210" width="204" height="90" rx="10"/>' +
+    '<rect x="84" y="150" width="152" height="70" rx="8"/><rect x="112" y="92" width="96" height="60" rx="8"/>' +
+    '<rect x="152" y="50" width="16" height="44" rx="3"/></g>' +
     '<ellipse cx="160" cy="300" rx="150" ry="18" fill="#e9dcc2"/>' +
     '<rect x="58" y="210" width="204" height="90" rx="10" fill="#f3e6cf"/>' +
     '<path d="M58 228 Q72 258 86 228 Q100 258 114 228 Q128 258 142 228 Q156 258 170 228 Q184 258 198 228 Q212 258 226 228 Q240 258 262 228 V300 H58 Z" fill="#fbf4e4"/>' +
@@ -180,10 +185,15 @@
   /* ---------- asset loader ---------- */
   const LOADED = {};
 
+  // A missing file answers at once, so it costs nothing. A file that is there is waited for:
+  // the house is built from this art (the front door cannot swing without both door paintings),
+  // and the "loading birthday girl" screen is up while it arrives. On a very slow connection
+  // the wait is capped, and the drawn version is used instead.
+  const PROBE_WAIT = 20000;
   function probe(path) {
     return new Promise((resolve) => {
       const img = new Image();
-      const timer = setTimeout(() => resolve(false), 2500);
+      const timer = setTimeout(() => resolve(false), PROBE_WAIT);
       img.onload = () => { clearTimeout(timer); LOADED[path] = true; resolve(true); };
       img.onerror = () => { clearTimeout(timer); resolve(false); };
       img.src = path;
@@ -202,6 +212,7 @@
     ["innerHall", A.innerHall],
     ["doorLeaf", A.doorLeaf],
     ["frontDoor", A.frontDoor],
+    ["cake", A.cake],
   ].forEach(([key, path]) => {
     if (!path) return;
     jobs.push(
@@ -215,6 +226,36 @@
   });
   Object.values(A.stickers || {}).forEach((path) => {
     if (path) jobs.push(probe(path));
+  });
+  // the journal's doodles are drawn into its pages when the book is set up, so they are waited for
+  (A.doodles || []).forEach((path) => {
+    if (path) jobs.push(probe(path));
+  });
+
+  // Art that does not hold up the start. It is put in place whenever it arrives, so a room
+  // that is already built simply changes to the new picture. onArt(key, fn) runs fn when it has.
+  const LATE = [
+    "damask", "cloud", "key", "envelope", "seal", "plaster", "vanityProps", "livingWall", "vinyl",
+    "reelBg", "coverCloth", "tapeCream", "tapeRose", "tapeSage", "tablecloth", "toyQuiz", "toyMemory",
+    "toyTorch", "toySpot", "toyCandles", "toyTickets", "toyCross", "toyWords", "cardBack", "studioWall", "studioProps", "skyNight", "houseNight",
+  ];
+  const waiting = {};
+  function onArt(key, fn) {
+    if (A[key] && LOADED[A[key]]) fn(A[key]);
+    else (waiting[key] = waiting[key] || []).push(fn);
+  }
+  LATE.forEach((key) => {
+    const path = A[key];
+    if (!path) return;
+    const img = new Image();
+    img.onload = () => {
+      LOADED[path] = true;
+      root.style.setProperty("--img-" + key, 'url("' + new URL(path, document.baseURI).href + '")');
+      root.classList.add("has-" + key);
+      (waiting[key] || []).forEach((fn) => fn(path));
+      waiting[key] = [];
+    };
+    img.src = path;
   });
 
   // the dream house: if the image isn't there, use the drawing instead
@@ -257,13 +298,41 @@
     return wrap;
   }
 
-  /* ---------- the cake element ---------- */
+  /* ---------- the cake element: the painted cake if its picture is saved, else the drawn one ---------- */
   function cake() {
     const wrap = document.createElement("div");
+    if (A.cake && LOADED[A.cake]) {
+      wrap.className = "cake cake-photo";
+      const img = document.createElement("img");
+      img.src = A.cake;
+      img.alt = "";
+      const flame = document.createElement("span");
+      flame.className = "cake-flame candle-hit";
+      const at = (D.cake && D.cake.flame) || { x: 50, y: 9 };
+      flame.style.setProperty("--fx", at.x + "%");
+      flame.style.setProperty("--fy", at.y + "%");
+      if (at.w) flame.style.setProperty("--fw", at.w + "%");
+      const smoke = document.createElement("span");
+      smoke.className = "cake-smoke";
+      smoke.style.setProperty("--fx", at.x + "%");
+      smoke.style.setProperty("--fy", at.y + "%");
+      smoke.innerHTML = "<i></i><i></i><i></i>";
+      wrap.append(img, flame, smoke);
+      return wrap;
+    }
     wrap.className = "cake";
     wrap.innerHTML = CAKE;
     return wrap;
   }
 
-  window.DIDI_ART = { sticker, decor, cake };
+  // has(key): whether an asset listed in content.js loaded
+  const has = (key) => !!(A[key] && LOADED[A[key]]);
+
+  // hasSticker(name): whether that sticker's PNG is saved (the journal's trip stickers wait for it)
+  const hasSticker = (name) => !!(A.stickers && A.stickers[name] && LOADED[A.stickers[name]]);
+
+  // the journal's doodles that are saved, in the order content.js lists them
+  const doodles = () => (A.doodles || []).filter((p) => LOADED[p]);
+
+  window.DIDI_ART = { sticker, decor, cake, has, hasSticker, onArt, doodles };
 })();

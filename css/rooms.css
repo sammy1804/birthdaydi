@@ -1,0 +1,1140 @@
+/* ============================================================
+   rooms.css: every room except the journal and the game table.
+   Each room is one composition that fills the stage.
+   ============================================================ */
+
+/* ---------- 1. OUTSIDE: the invitation ---------- */
+.outside { color: var(--cream-text); }
+.outside-bg {
+  position: absolute;
+  inset: -4%;
+  background-color: #4a5234;
+  background-image: var(--img-cover, none);
+  background-size: cover;
+  background-position: center;
+}
+.outside-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(20, 16, 8, 0.5), rgba(20, 16, 8, 0.26) 30%, rgba(20, 16, 8, 0.34) 70%, rgba(20, 16, 8, 0.62));
+}
+/* the house: the whole painting sits behind an arch-shaped window. As you walk up, the
+   window opens to the full stage and the house comes toward you (set in js/house.js). */
+.house-window {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  clip-path: inset(22% 36% 30% 36% round 200px 200px 0 0);
+}
+.house-cam {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  transform-origin: 47.85% 58.6%;
+  will-change: transform;
+}
+.house-img { width: 100%; height: 100%; object-fit: cover; }
+/* the front door: the closed door, cut from the painting, hung on its hinges over the open doorway */
+.house-door {
+  position: absolute;
+  left: 43.36%;
+  top: 37.89%;
+  width: 15.23%;
+  height: 41.6%;
+  perspective: 900px;
+  display: none;
+}
+.has-doorOpen.has-frontDoor .house-door { display: block; }
+.house-leaf {
+  position: absolute;
+  inset: 0;
+  transform-origin: 100% 50%;
+  background-image: var(--img-frontDoor);
+  background-size: 656.6% 240.4%;
+  background-position: 51.15% 64.88%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.house-leaf-shade { position: absolute; inset: 0; background: #1a0d08; opacity: 0; }
+.house-dark { position: absolute; inset: 0; background: #140c07; opacity: 0; pointer-events: none; }
+
+.invite {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: calc(var(--sh) * 0.05) 20px calc(var(--sh) * 0.06);
+  text-align: center;
+  pointer-events: none;
+}
+.invite > * { pointer-events: auto; }
+.kicker {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font: 600 12px / 1 var(--label);
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--gold-light);
+}
+.kicker::before,
+.kicker::after { content: ""; width: 46px; height: 1px; background: currentColor; opacity: 0.7; }
+.arch-slot {
+  position: relative;
+  flex: none;
+  width: min(calc(var(--sh) * 0.44), calc(var(--sw) * 0.66), 430px);
+  aspect-ratio: 1 / 1.1;
+  margin-top: clamp(34px, calc(var(--sh) * 0.056), 54px);
+  pointer-events: none;
+}
+.arch-rim {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50% 50% 5px 5px / 45.5% 45.5% 5px 5px;
+  box-shadow: 0 0 0 1px rgba(243, 233, 212, 0.38), inset 0 0 0 8px rgba(243, 233, 212, 0.14), 0 40px 60px -30px rgba(0, 0, 0, 0.6);
+}
+.arc { position: absolute; max-width: none; overflow: visible; pointer-events: none; }
+.arc-text {
+  font: 600 12.5px var(--label);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  fill: var(--gold-light);
+}
+.hero-name {
+  position: relative;
+  z-index: 3;
+  margin-top: -0.44em;
+  font-family: var(--script);
+  font-weight: 400;
+  font-size: clamp(96px, min(calc(var(--sh) * 0.27), calc(var(--sw) * 0.44)), 250px);
+  line-height: 0.8;
+  white-space: nowrap;
+  color: var(--cream-text);
+  text-shadow: 0 3px 26px rgba(20, 14, 8, 0.5);
+}
+.hero-sub {
+  margin-top: clamp(14px, calc(var(--sh) * 0.026), 26px);
+  max-width: 34ch;
+  font: italic 400 clamp(17px, calc(var(--sh) * 0.026), 23px) / 1.4 var(--serif);
+  color: rgba(243, 233, 212, 0.94);
+  text-wrap: balance;
+}
+.come-in {
+  margin-top: clamp(12px, calc(var(--sh) * 0.022), 22px);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--cream-text);
+  font: 600 11px / 1 var(--label);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+.come-in svg {
+  width: 14px;
+  height: 26px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  animation: bob 2.6s ease-in-out infinite;
+}
+.come-in span { padding: 0 0 7px 0.3em; border-bottom: 1px solid rgba(243, 233, 212, 0.6); }
+.come-in:hover { color: var(--gold-light); }
+@keyframes bob { 50% { transform: translateY(5px); } }
+
+.stamp {
+  position: absolute;
+  z-index: 3;
+  right: 10%;
+  bottom: 13%;
+  padding: 14px 20px 12px;
+  text-align: center;
+  color: var(--cream-text);
+  border: 1.5px solid rgba(243, 233, 212, 0.8);
+  outline: 1px solid rgba(243, 233, 212, 0.35);
+  outline-offset: 4px;
+  rotate: -8deg;
+  pointer-events: none;
+}
+.stamp-big { display: block; font: italic 400 44px / 0.9 var(--serif); }
+.stamp-small { display: block; margin-top: 8px; font: 600 10px / 1 var(--label); letter-spacing: 0.26em; text-transform: uppercase; }
+.deco { position: absolute; z-index: 3; pointer-events: none; }
+.deco-a { right: 11%; top: 16%; --st: clamp(56px, calc(var(--sh) * 0.11), 100px); }
+.deco-b { left: 9%; bottom: 17%; --st: clamp(44px, calc(var(--sh) * 0.08), 74px); rotate: -12deg; }
+
+/* ---------- 2. THE FRONT HALL: the letter ---------- */
+.entrance > .cam { background: #2a1d12; }
+.hall-bg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; will-change: transform; }
+.hall-bg img { width: 100%; height: 100%; object-fit: cover; }
+.hall-shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(40, 24, 10, 0.42), rgba(40, 24, 10, 0) 58%),
+    linear-gradient(0deg, rgba(40, 24, 10, 0.5), rgba(40, 24, 10, 0) 46%);
+}
+.hall-front { position: absolute; inset: 0; }
+.hall-script {
+  position: absolute;
+  left: 37%;
+  bottom: 12.5%;
+  z-index: 1;
+  font-family: var(--script);
+  font-size: clamp(64px, calc(var(--sw) * 0.106), 190px);
+  line-height: 0.92;
+  white-space: nowrap;
+  color: rgba(248, 242, 228, 0.95);
+  text-shadow: 0 4px 30px rgba(40, 20, 8, 0.4);
+  pointer-events: none;
+}
+.letter-set {
+  position: absolute;
+  left: clamp(20px, 8%, 130px);
+  top: 46%;
+  z-index: 2;
+  width: min(500px, 40%);
+  translate: 0 -50%;
+}
+/* the envelope the letter came out of */
+.envelope {
+  position: absolute;
+  left: -9%;
+  bottom: -15%;
+  width: 70%;
+  aspect-ratio: 1.5;
+  rotate: -8deg;
+  filter: drop-shadow(0 18px 16px rgba(40, 22, 8, 0.4));
+}
+.env-back,
+.env-flap,
+.env-front {
+  position: absolute;
+  background-color: var(--kraft);
+  background-image: var(--img-kraft, none);
+  background-size: 300px;
+}
+.env-back { inset: 0; filter: brightness(0.8); }
+.env-flap { left: 0; right: 0; bottom: 99%; height: 60%; clip-path: polygon(0 100%, 50% 0, 100% 100%); filter: brightness(0.9); }
+.env-front { inset: 0; clip-path: polygon(0 0, 50% 54%, 100% 0, 100% 100%, 0 100%); }
+.env-front::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top right, transparent 49.75%, rgba(60, 36, 14, 0.3) 50%, transparent 50.3%),
+    linear-gradient(to top left, transparent 49.75%, rgba(60, 36, 14, 0.3) 50%, transparent 50.3%);
+}
+/* the wax seal: pressed on the bottom edge of the letter, half on it and half off */
+.seal {
+  position: absolute;
+  left: 7%;
+  bottom: -6%;
+  z-index: 3;
+  width: clamp(56px, 15%, 86px);
+  aspect-ratio: 1;
+  rotate: -8deg;
+  display: grid;
+  place-items: center;
+  border-radius: 46% 54% 50% 50% / 52% 48% 54% 46%;
+  background: radial-gradient(circle at 34% 28%, #a43c47, #6b1d26 58%, #47121a);
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.28), inset 0 0 0 5px rgba(134, 42, 54, 0.6), 0 5px 8px -3px rgba(0, 0, 0, 0.5);
+}
+.seal i { font: normal 400 clamp(26px, calc(var(--sw) * 0.026), 42px) / 1 var(--script); translate: 0 6%; color: #ecd29c; text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35); }
+.letter {
+  position: relative;
+  padding: clamp(26px, calc(var(--sw) * 0.034), 50px);
+  background-color: var(--card);
+  background-image: var(--img-paper, none);
+  background-size: 440px;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04), 0 34px 50px -28px rgba(40, 25, 10, 0.65);
+  rotate: -1.4deg;
+}
+.greet { font-family: var(--script); font-size: clamp(38px, calc(var(--sh) * 0.062), 60px); line-height: 1; color: var(--oxblood); }
+#letter-body p { margin-top: 0.75em; font-size: clamp(16px, calc(var(--sh) * 0.0235), 21px); line-height: 1.55; text-wrap: pretty; }
+.sign { margin-top: 14px; text-align: right; font-family: var(--note); font-size: clamp(36px, calc(var(--sh) * 0.055), 50px); line-height: 1; color: var(--oxblood); }
+.hall-note {
+  position: absolute;
+  left: 38%;
+  bottom: 7%;
+  z-index: 2;
+  font: italic 400 clamp(16px, calc(var(--sw) * 0.015), 21px) / 1.4 var(--serif);
+  color: rgba(248, 242, 228, 0.96);
+  text-shadow: 0 1px 12px rgba(40, 20, 8, 0.7);
+}
+
+/* ---------- 3. THE HALLWAY: the wall of frames ---------- */
+.hallway > .cam { background: #ead8b4; }
+.wall-track {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 300vw;
+  will-change: transform;
+}
+.wall-title {
+  position: absolute;
+  left: clamp(22px, calc(var(--sw) * 0.065), 120px);
+  top: calc(var(--sh) * 0.24);
+  z-index: 2;
+}
+.wall-frames {
+  position: absolute;
+  left: 0;
+  top: calc(var(--sh) * 0.095);
+  width: 100%;
+  height: calc(var(--sh) * 0.69);
+  --fh: clamp(150px, calc(var(--sh) * 0.3), 340px);
+}
+/* a frame on the wall: its picture sits in the frame's opening, the frame is laid over it */
+.wframe {
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin: 0;
+  height: calc(var(--fh) * var(--hs, 1));
+  aspect-ratio: var(--ar, 0.8);
+  filter: drop-shadow(0 16px 12px rgba(50, 30, 10, 0.36));
+}
+.wframe .photo {
+  position: absolute;
+  inset: var(--win);
+  overflow: hidden;
+  border-radius: var(--win-r, 0);
+  background: #d9cba8;
+}
+.wframe::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--frame-img) center / 100% 100% no-repeat;
+}
+.wframe figcaption {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 4px);
+  translate: -50% 0;
+  padding: 3px 12px 2px;
+  white-space: nowrap;
+  font: 400 21px / 1 var(--note);
+  color: #4a3722;
+  background: rgba(247, 241, 227, 0.92);
+  box-shadow: 0 1px 2px rgba(50, 30, 10, 0.25);
+  rotate: -2deg;
+}
+.f-cream { --ar: 0.8; --win: 10% 11.7% 10.2% 11.6%; --frame-img: url("../assets/frames/cream.webp"); }
+.f-blue { --ar: 0.8; --win: 9.1% 10.2% 9.1% 10.1%; --frame-img: url("../assets/frames/blue.webp"); }
+.f-oval { --ar: 0.8; --win: 14% 16.4% 14.1% 15.9%; --win-r: 50%; --frame-img: url("../assets/frames/oval.webp"); }
+.f-arch { --ar: 0.8; --win: 13% 13.2% 5.2% 12.8%; --win-r: 50% 50% 4px 4px / 22% 22% 4px 4px; --frame-img: url("../assets/frames/arch.webp"); }
+.f-round { --ar: 1; --win: 16.8% 17.2% 16.7% 16.1%; --win-r: 50%; --frame-img: url("../assets/frames/round.webp"); }
+.f-gold { --ar: 1; --win: 9.1% 9.1% 10.3% 9.1%; --frame-img: url("../assets/frames/gold-square.webp"); }
+.f-shell { --ar: 0.914; --win: 18.5% 22.4% 15% 22.4%; --win-r: 30% / 24%; --frame-img: url("../assets/vanity/frame.webp"); }
+
+/* ---------- 4. THE VANITY: the mirror ---------- */
+.vanity > .cam { background: #e9bfa6; }
+.vanity-bg {
+  position: absolute;
+  inset: -3%;
+  background-color: #e9bfa6;
+  background-image: var(--img-vanityBg, none);
+  background-size: cover;
+  background-position: center;
+}
+.vanity-layout {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1.04fr) minmax(0, 0.96fr);
+  align-items: center;
+  gap: 3%;
+  padding: 6% 7%;
+}
+/* the red panel: damask, with its corners scooped out */
+.vanity-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 64%;
+  padding: clamp(30px, calc(var(--sh) * 0.07), 76px) clamp(26px, calc(var(--sw) * 0.045), 70px);
+  color: var(--cream-text);
+  background-color: var(--crimson);
+  --notch: clamp(16px, calc(var(--sh) * 0.03), 28px);
+  -webkit-mask:
+    radial-gradient(circle var(--notch) at 0 0, #0000 98%, #000) 0 0 / 51% 51% no-repeat,
+    radial-gradient(circle var(--notch) at 100% 0, #0000 98%, #000) 100% 0 / 51% 51% no-repeat,
+    radial-gradient(circle var(--notch) at 0 100%, #0000 98%, #000) 0 100% / 51% 51% no-repeat,
+    radial-gradient(circle var(--notch) at 100% 100%, #0000 98%, #000) 100% 100% / 51% 51% no-repeat;
+  mask:
+    radial-gradient(circle var(--notch) at 0 0, #0000 98%, #000) 0 0 / 51% 51% no-repeat,
+    radial-gradient(circle var(--notch) at 100% 0, #0000 98%, #000) 100% 0 / 51% 51% no-repeat,
+    radial-gradient(circle var(--notch) at 0 100%, #0000 98%, #000) 0 100% / 51% 51% no-repeat,
+    radial-gradient(circle var(--notch) at 100% 100%, #0000 98%, #000) 100% 100% / 51% 51% no-repeat;
+  --lock-script: #f3dfae;
+  --lock-caps: #f8eedb;
+}
+/* the damask: the wallpaper's pattern, pressed into the red */
+.vanity-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--img-wallpaper, none);
+  background-size: 330px;
+  filter: grayscale(1) brightness(2.3) contrast(1.5);
+  mix-blend-mode: overlay;
+  opacity: 0.6;
+  pointer-events: none;
+}
+.vanity-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(150deg, rgba(255, 240, 220, 0.1), rgba(0, 0, 0, 0) 40%, rgba(30, 4, 6, 0.3));
+  pointer-events: none;
+}
+.vanity-panel > * { position: relative; z-index: 1; }
+/* a real damask, when its picture is saved, in place of the pressed pattern */
+.has-damask .vanity-panel { background-image: var(--img-damask); background-size: cover; background-position: center; }
+.has-damask .vanity-panel::before { display: none; }
+/* one cloud that drifts across the room, when its picture is saved */
+.vanity-cloud {
+  display: none;
+  position: absolute;
+  left: -6%;
+  top: 6%;
+  width: 34%;
+  aspect-ratio: 1.9;
+  background: var(--img-cloud) center / contain no-repeat;
+  pointer-events: none;
+  animation: drift 46s ease-in-out infinite alternate;
+}
+.has-cloud .vanity-cloud { display: block; }
+@keyframes drift { to { transform: translate(26vw, -4%); } }
+.panel-dot { width: 9px; height: 9px; margin-bottom: clamp(14px, calc(var(--sh) * 0.03), 28px); background: #f3dfae; rotate: 45deg; }
+.panel-note {
+  margin-top: clamp(16px, calc(var(--sh) * 0.03), 28px);
+  max-width: 30ch;
+  font: italic 400 clamp(16px, calc(var(--sh) * 0.025), 22px) / 1.45 var(--serif);
+  color: rgba(248, 238, 219, 0.9);
+  text-wrap: pretty;
+}
+.vanity-count {
+  margin-top: clamp(14px, calc(var(--sh) * 0.028), 26px);
+  min-height: 1em;
+  font: 600 10.5px / 1 var(--label);
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: #ebd29a;
+}
+.mirror-wrap {
+  position: relative;
+  justify-self: center;
+  height: min(calc(var(--sh) * 0.84), calc(var(--sw) * 0.52));
+  aspect-ratio: 0.8;
+}
+.mirror {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 30px 24px rgba(110, 50, 30, 0.34));
+  transition: transform 0.5s var(--ease);
+}
+.mirror:hover { transform: scale(1.012); }
+.mirror:active { transform: scale(0.994); }
+.mirror-glass {
+  position: absolute;
+  inset: 12.6% 14.6% 12.7% 14.2%;
+  overflow: hidden;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 34% 22%, #fdf7ef, #eedfce 46%, #cfb69e);
+}
+/* her, in the glass */
+.mirror-face {
+  position: absolute;
+  inset: 0;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 50% 24%;
+  opacity: 0;
+  filter: saturate(0.85) contrast(0.96);
+  transition: opacity 1.4s ease;
+}
+.mirror.has-face .mirror-face { opacity: 0.94; }
+/* the kind things, running up through the glass again and again */
+.mirror-run { position: absolute; inset: 0; overflow: hidden; opacity: 0.5; }
+.mirror.has-face .mirror-run { opacity: 0; }
+.run-track { position: absolute; left: 0; right: 0; top: 0; display: block; animation: run var(--run, 20s) linear infinite; }
+.run-half { display: block; }
+.run-group { display: block; }
+.run-line {
+  display: block;
+  padding: 0.5em 14%;
+  text-align: center;
+  font: italic 400 clamp(13px, calc(var(--sh) * 0.022), 20px) / 1.2 var(--serif);
+  color: #8a5a4a;
+}
+@keyframes run { to { transform: translateY(-50%); } }
+.mirror-sheen {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(118deg, rgba(255, 255, 255, 0.5) 0 10%, rgba(255, 255, 255, 0) 28% 60%, rgba(255, 255, 255, 0.24) 78%, rgba(255, 255, 255, 0) 90%);
+  mix-blend-mode: screen;
+}
+.mirror-text {
+  position: absolute;
+  left: 13%;
+  right: 13%;
+  top: 77%;
+  translate: 0 -50%;
+  padding: 0.34em 0.3em 0.26em;
+  text-align: center;
+  font-family: var(--script);
+  font-size: clamp(22px, calc(var(--sh) * 0.047), 50px);
+  line-height: 1.04;
+  color: var(--oxblood);
+  background: rgba(251, 245, 234, 0.84);
+  box-shadow: 0 6px 12px -6px rgba(60, 30, 20, 0.5);
+  rotate: -2deg;
+}
+.mirror-beyond { position: absolute; inset: 0; background: #6b1d21; opacity: 0; pointer-events: none; }
+.mirror-frame {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--img-mirrorFrame, none) center / 100% 100% no-repeat;
+}
+/* ---------- 5. THE LIVING ROOM: songs on a record ---------- */
+.living { color: var(--cream-text); }
+.living > .cam { background: #6b1d21; }
+.living-bg {
+  position: absolute;
+  inset: 0;
+  background-color: #6b1d21;
+  background-image:
+    linear-gradient(100deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0) 34%, rgba(0, 0, 0, 0) 70%, rgba(0, 0, 0, 0.16)),
+    linear-gradient(88deg, transparent 30.6%, rgba(255, 255, 255, 0.045) 30.9%, transparent 31.4%),
+    linear-gradient(176deg, transparent 61.5%, rgba(0, 0, 0, 0.1) 61.8%, transparent 62.4%),
+    var(--noise);
+}
+.living-eyebrow,
+.living-foot {
+  position: absolute;
+  left: 5%;
+  z-index: 2;
+  font: 600 11px / 1.6 var(--label);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--marigold);
+}
+.living-eyebrow { top: 6.5%; }
+.living-foot { bottom: 6%; left: auto; right: 30%; }
+.record-stage {
+  position: absolute;
+  left: 5.5%;
+  top: 52%;
+  height: min(calc(var(--sh) * 0.74), calc(var(--sw) * 0.5));
+  aspect-ratio: 1;
+  translate: 0 -50%;
+}
+.vinyl {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    conic-gradient(from 24deg, rgba(255, 255, 255, 0) 0 7%, rgba(255, 255, 255, 0.1) 12%, rgba(255, 255, 255, 0) 19% 50%, rgba(255, 255, 255, 0.08) 60%, rgba(255, 255, 255, 0) 68%),
+    repeating-radial-gradient(circle, #0c0b0b 0 1.4px, #1e1c1c 1.4px 2.7px);
+  box-shadow: 0 34px 44px -18px rgba(0, 0, 0, 0.65), inset 0 0 0 2px #050505;
+  animation: spin 16s linear infinite;
+}
+.vinyl::after {
+  content: "";
+  position: absolute;
+  inset: 27.5%;
+  border-radius: 50%;
+  background: #121010;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+.vinyl--back { left: 48%; top: 24%; width: 88%; height: 88%; z-index: 0; animation: none; filter: brightness(0.82); }
+.vinyl-label {
+  position: absolute;
+  inset: 31.5%;
+  z-index: 1;
+  overflow: hidden;
+  border-radius: 50%;
+  background: #e8dcc5;
+}
+.vinyl-label .media { filter: grayscale(1) contrast(1.06); }
+.vinyl-label::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 7%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: #1a1414;
+  box-shadow: 0 0 0 2px rgba(240, 230, 210, 0.75);
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.vinyl-arc { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 2; }
+.vinyl-text { font-family: var(--script); font-size: 46px; fill: var(--marigold); }
+.stickers { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.stickers .sticker { position: absolute; --st: 12%; translate: -50% -50%; rotate: var(--rot, 0deg); }
+/* a torn scrap of kraft paper with a few words */
+.kraft-note {
+  position: absolute;
+  right: -5%;
+  bottom: 9%;
+  z-index: 3;
+  padding: 0.7em 1.1em 0.8em 0.9em;
+  font: 400 clamp(26px, calc(var(--sh) * 0.046), 42px) / 1 var(--note);
+  color: #3b2a16;
+  background-color: var(--kraft);
+  background-image: var(--img-kraft, none);
+  background-size: 260px;
+  clip-path: polygon(2% 8%, 14% 0, 31% 6%, 52% 1%, 70% 7%, 88% 2%, 100% 12%, 96% 34%, 100% 58%, 95% 82%, 99% 100%, 76% 94%, 58% 100%, 36% 93%, 18% 99%, 0 90%, 4% 62%, 0 38%);
+  filter: drop-shadow(0 8px 6px rgba(0, 0, 0, 0.35));
+  rotate: -7deg;
+}
+.living-copy {
+  position: absolute;
+  left: 53%;
+  top: 50%;
+  z-index: 2;
+  width: min(30%, 440px);
+  translate: 0 -50%;
+  --lock-script: var(--marigold);
+  --lock-caps: #f8eedb;
+}
+.tracks { margin-top: clamp(16px, calc(var(--sh) * 0.03), 28px); counter-reset: t; }
+.tracks li {
+  counter-increment: t;
+  display: flex;
+  gap: 16px;
+  --row-pad: 9px; /* on the number and the link, not the row, so the whole row is the tap target */
+  border-bottom: 1px solid rgba(248, 238, 219, 0.2);
+  font: 500 12px / 1.4 var(--label);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.tracks li::before { content: counter(t, decimal-leading-zero); color: var(--marigold); padding: var(--row-pad) 0; }
+/* each song is a link to it on Spotify, with a small play mark at the end of its row */
+.track-link {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: var(--row-pad) 0;
+  color: inherit;
+  text-decoration: none;
+  border-radius: 2px;
+}
+.track-play {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  color: var(--marigold);
+  opacity: 0.55;
+  transition: opacity 0.2s ease, scale 0.2s ease;
+}
+.track-play svg { display: block; width: 100%; height: 100%; }
+.track { transition: color 0.2s ease; }
+.track-link:hover .track,
+.track-link:focus-visible .track { color: var(--marigold); }
+.track-link:hover .track-play,
+.track-link:focus-visible .track-play { opacity: 1; scale: 1.12; }
+.track-link:focus-visible { outline: 1px solid var(--marigold); outline-offset: 4px; }
+/* the song that is playing: its row becomes Spotify's player, number still beside it */
+.tracks li.is-open { align-items: center; }
+.tracks li.is-open .track-link { display: none; }
+.track-player { flex: 1; min-width: 0; height: 80px; margin: var(--row-pad) 0; border-radius: 12px; overflow: hidden; background: rgba(0, 0, 0, 0.25); }
+.track-player iframe { display: block; width: 100%; height: 80px; border: 0; border-radius: 12px; }
+.track-by {
+  display: block;
+  margin-top: 3px;
+  font: italic 400 14px / 1.2 var(--serif);
+  letter-spacing: 0.02em;
+  text-transform: none;
+  opacity: 0.72;
+}
+.tracks:empty { display: none; }
+/* The kraft note pokes out past the record's right edge. Once the song list is long enough to
+   push the names down beside it, they step right just far enough to clear it. The record is
+   min(74% of the height, 50% of the width) wide and starts at 5.5%; the note ends 5% past it. */
+.names-strip {
+  margin-top: clamp(18px, calc(var(--sh) * 0.034), 30px);
+  padding-left: max(0px, calc(min(var(--sh) * 0.74, var(--sw) * 0.5) * 1.05 - var(--sw) * 0.475 + 14px));
+}
+.names-label { font-family: var(--note); font-size: clamp(26px, calc(var(--sh) * 0.04), 34px); line-height: 1; color: var(--marigold); }
+.names { display: flex; flex-wrap: wrap; gap: 14px 18px; margin-top: 12px; }
+.tag-wrap { rotate: var(--r, 0deg); filter: drop-shadow(0 8px 6px rgba(0, 0, 0, 0.3)); }
+.tag {
+  position: relative;
+  padding: 12px 20px 10px 34px;
+  font: 400 clamp(26px, calc(var(--sh) * 0.04), 34px) / 1 var(--note);
+  color: #3b2a16;
+  background-color: var(--kraft);
+  background-image: var(--img-kraft, none);
+  background-size: 240px;
+  clip-path: polygon(16px 0, 100% 0, 100% 100%, 16px 100%, 0 50%);
+}
+.tag::before {
+  content: "";
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  width: 9px;
+  height: 9px;
+  translate: 0 -50%;
+  border-radius: 50%;
+  background: #6b1d21;
+  box-shadow: 0 0 0 2px rgba(250, 240, 215, 0.7);
+}
+/* a strip of film down the right edge, in black and white */
+.filmstrip {
+  position: absolute;
+  right: -2%;
+  top: -12%;
+  z-index: 1;
+  width: min(19%, 250px);
+  height: 132%;
+  display: flex;
+  flex-direction: column;
+  gap: 2.2%;
+  padding: 0 2.4% 0;
+  background: #b8431f;
+  rotate: 11deg;
+  box-shadow: -14px 0 30px -12px rgba(0, 0, 0, 0.55);
+}
+.filmstrip::before,
+.filmstrip::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 7.5%;
+  background: repeating-linear-gradient(180deg, transparent 0 13px, #3a1408 13px 30px, transparent 30px 40px);
+}
+.filmstrip::before { left: 2.5%; }
+.filmstrip::after { right: 2.5%; }
+.filmstrip figure { flex: none; margin: 0 10%; aspect-ratio: 1 / 1.1; overflow: hidden; background: #d9d2c4; }
+.filmstrip img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.06); }
+
+/* ---------- 6. THE REEL: the viewmaster disc ---------- */
+.reel { color: var(--cream-text); }
+.reel > .cam { background: #59603c; }
+.reel-bg {
+  position: absolute;
+  inset: -3%;
+  background-color: #59603c;
+  background-image: var(--img-cover, none);
+  background-size: cover;
+  background-position: 82% 60%;
+}
+.reel-bg::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(24, 18, 8, 0.2), rgba(24, 18, 8, 0.5)); }
+.reel-layout {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+  align-items: center;
+  gap: 5%;
+  padding: 5% 6% 6%;
+}
+.disc-wrap {
+  position: relative;
+  justify-self: center;
+  height: min(calc(var(--sh) * 0.84), calc(var(--sw) * 0.5));
+  aspect-ratio: 1;
+}
+.disc {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background-color: #efe6cf;
+  background-image: var(--img-paper, none);
+  background-size: 440px;
+  box-shadow: inset 0 0 0 2px rgba(120, 96, 50, 0.3), inset 0 0 40px rgba(120, 96, 50, 0.14), 0 34px 44px -16px rgba(20, 14, 6, 0.65);
+}
+.disc::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 3.6%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: #b0302f;
+  box-shadow: 0 0 0 3px rgba(60, 44, 20, 0.5);
+}
+.notch { position: absolute; width: 2.6%; height: 4.6%; translate: -50% -50%; rotate: var(--a); background: #6a5a3c; border-radius: 2px; opacity: 0.75; }
+.disc-ring { position: absolute; inset: 0; transition: rotate 1.1s var(--ease); }
+.slot {
+  position: absolute;
+  width: 16.5%;
+  aspect-ratio: 1 / 1.06;
+  translate: -50% -50%;
+  rotate: var(--a);
+  padding: 0;
+  overflow: hidden;
+  border-radius: 22%;
+  background: #cbb98f;
+  box-shadow: inset 0 0 0 2px rgba(60, 44, 20, 0.55), 0 0 0 3px rgba(60, 44, 20, 0.16);
+  transition: scale 0.3s var(--ease);
+}
+.slot:hover { scale: 1.07; }
+.slot.is-on { box-shadow: 0 0 0 3px #b0302f; }
+.slot-media { position: absolute; inset: 0; display: block; }
+.slot-no {
+  position: absolute;
+  translate: -50% -50%;
+  rotate: var(--a);
+  font: 700 clamp(9px, calc(var(--sh) * 0.015), 13px) / 1 var(--label);
+  color: #3a2a14;
+}
+.disc-center {
+  position: absolute;
+  inset: 24% 27% 53% 27%;
+  display: grid;
+  place-content: end center;
+  justify-items: center;
+  gap: 2px;
+  text-align: center;
+  pointer-events: none;
+}
+.disc-label { font: 600 clamp(8.5px, calc(var(--sh) * 0.013), 11px) / 1 var(--label); letter-spacing: 0.3em; text-transform: uppercase; color: #3a2a14; }
+.disc-title { font-family: var(--script); font-size: clamp(22px, calc(var(--sh) * 0.056), 54px); line-height: 0.9; color: #b0302f; rotate: -6deg; margin: 2px 0 0; }
+.disc-notes { position: absolute; left: 50%; top: 130%; translate: -50% 0; width: 20ch; font: italic 400 clamp(11px, calc(var(--sh) * 0.017), 14px) / 1.25 var(--serif); color: #4a3a22; }
+.disc-notes:empty { display: none; }
+.viewer { --lock-script: #f3dfae; --lock-caps: #f8eedb; }
+.viewer-slide {
+  position: relative;
+  margin-top: clamp(18px, calc(var(--sh) * 0.04), 36px);
+  width: min(100%, calc(var(--sh) * 0.44));
+  aspect-ratio: 1 / 1.06;
+  overflow: hidden;
+  border-radius: 11%;
+  background: #1d1712;
+  box-shadow: 0 0 0 10px #f3ead3, 0 0 0 11px rgba(90, 70, 30, 0.45), 0 30px 34px -14px rgba(20, 14, 6, 0.65);
+}
+.viewer-media { position: absolute; inset: 0; display: block; }
+.viewer-media .media { animation: slide-in 0.7s var(--ease); }
+@keyframes slide-in { from { opacity: 0; scale: 1.06; } }
+.viewer-beyond { position: absolute; inset: 0; background: var(--slate); opacity: 0; pointer-events: none; }
+.slide-no { margin-top: 26px; font: 600 10.5px / 1 var(--label); letter-spacing: 0.26em; text-transform: uppercase; color: #f3dfae; }
+.slide-caption { margin-top: 8px; min-height: 1.2em; font: italic 400 clamp(17px, calc(var(--sh) * 0.026), 22px) / 1.25 var(--serif); color: #f8eedb; }
+
+/* ---------- 10. THE ROOFTOP: wishes and the cake ---------- */
+.rooftop { color: #fff8ea; }
+.rooftop > .cam { background: #c98a7a; }
+.sky-bg { position: absolute; inset: -3%; background: #c98a7a url("../assets/rooftop/sky.jpg") center / cover; }
+.sky-night {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #0c1030 0%, #23234d 46%, #5a3355 100%);
+  mix-blend-mode: multiply;
+  opacity: 0;
+  transition: opacity 2.8s ease;
+}
+.rooftop.is-night .sky-night { opacity: 0.92; }
+.sky { position: absolute; left: 0; right: 0; top: 0; height: 62%; }
+.lights { position: absolute; left: -2%; right: -2%; top: 1%; height: 15%; }
+.lights .decor,
+.lights svg { width: 100%; height: 100%; display: block; }
+.bulb-g { animation: twinkle 3.4s ease-in-out infinite; animation-delay: var(--d, 0s); }
+@keyframes twinkle { 50% { opacity: 0.55; } }
+.wish-star {
+  position: absolute;
+  translate: -50% -50%;
+  padding: 8px;
+  --st: clamp(30px, calc(var(--sh) * 0.052), 54px);
+  transition: scale 0.35s var(--ease), rotate 0.35s var(--ease);
+}
+.wish-star:hover { scale: 1.18; rotate: 14deg; }
+.wish-star.is-on { scale: 1.3; rotate: 20deg; }
+/* at night the stars are the brightest thing in the sky, and everything else falls into dusk */
+.rooftop.is-night .wish-star .sticker { filter: brightness(1.35) drop-shadow(0 0 5px rgba(255, 226, 150, 0.55)); animation: star-night 2.8s ease-in-out infinite; }
+.rooftop.is-night .wish-star:nth-of-type(2n) .sticker { animation-delay: 0.9s; }
+.rooftop.is-night .wish-star:nth-of-type(3n) .sticker { animation-delay: 1.7s; }
+@keyframes star-night { 50% { opacity: 0.72; } }
+.cake, .parapet, .lights { transition: filter 2.8s ease; }
+.rooftop.is-night .cake { filter: brightness(0.8) saturate(0.85); }
+.rooftop.is-night .parapet { filter: brightness(0.55) saturate(0.8); }
+.rooftop.is-night .lights { filter: brightness(1.25); }
+.wish-card,
+.cake-wish {
+  position: absolute;
+  left: 50%;
+  translate: -50% -50%;
+  z-index: 4;
+  width: min(380px, 82%);
+  padding: 24px 26px 22px;
+  text-align: center;
+  color: var(--ink);
+  background-color: var(--card);
+  background-image: var(--img-paper, none);
+  background-size: 420px;
+  box-shadow: 0 30px 40px -20px rgba(40, 10, 30, 0.6);
+}
+.wish-card { top: 62%; rotate: -1.6deg; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
+.wish-card.pop { opacity: 1; animation: pop 0.55s var(--ease); }
+@keyframes pop { from { opacity: 0; transform: translateY(14px) scale(0.96); } }
+.wish-text { margin-top: 10px; font: italic 500 clamp(20px, calc(var(--sh) * 0.032), 27px) / 1.25 var(--serif); text-wrap: balance; }
+.roof-copy {
+  position: absolute;
+  left: 6%;
+  bottom: 13%;
+  z-index: 2;
+  --lock-script: #fff1cf;
+  --lock-caps: #fff8ea;
+  --lock-note: rgba(255, 247, 230, 0.94);
+  text-shadow: 0 2px 20px rgba(70, 20, 50, 0.4);
+}
+.cake-set {
+  position: absolute;
+  right: 9%;
+  bottom: 6.6%;
+  z-index: 3;
+  width: min(30%, calc(var(--sh) * 0.5));
+}
+.cake-stage { width: 100%; }
+.cake { position: relative; width: 100%; }
+.cake-svg { width: 100%; height: auto; overflow: visible; filter: drop-shadow(0 18px 14px rgba(50, 14, 34, 0.4)); }
+.cake-svg .flame { transform-origin: 160px 48px; animation: flicker 0.9s ease-in-out infinite alternate; }
+@keyframes flicker { to { transform: scaleY(1.12) skewX(-3deg); } }
+.cake-svg .smoke circle { opacity: 0; }
+.cake.is-blown .flame-g { opacity: 0; transition: opacity 0.25s ease; }
+.cake.is-blown .smoke circle { animation: smoke 2.4s ease-out forwards; }
+.cake.is-blown .smoke circle:nth-child(2) { animation-delay: 0.25s; }
+.cake.is-blown .smoke circle:nth-child(3) { animation-delay: 0.5s; }
+@keyframes smoke { 0% { opacity: 0; transform: translateY(0); } 25% { opacity: 0.7; } 100% { opacity: 0; transform: translateY(-46px); } }
+/* a painted cake, when its picture is saved: the flame is drawn over it */
+.cake-photo { position: relative; }
+.cake-photo img { width: 100%; height: auto; filter: drop-shadow(0 18px 14px rgba(50, 14, 34, 0.4)); }
+.cake-flame {
+  position: absolute;
+  left: var(--fx, 50%);
+  top: var(--fy, 6%);
+  width: var(--fw, 7%);
+  aspect-ratio: 0.5;
+  translate: -50% -100%;
+  border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
+  background: radial-gradient(ellipse at 50% 72%, #fff6d6 0 22%, #f3c96b 46%, rgba(243, 160, 60, 0.9) 78%);
+  transform-origin: 50% 100%;
+  animation: flicker 0.9s ease-in-out infinite alternate;
+  cursor: pointer;
+}
+.cake.is-blown .cake-flame { opacity: 0; transition: opacity 0.25s ease; }
+/* the wisp of smoke from the painted cake's candle */
+.cake-smoke { position: absolute; left: var(--fx, 50%); top: var(--fy, 6%); width: 0; height: 0; pointer-events: none; }
+.cake-smoke i {
+  position: absolute;
+  left: -7px;
+  top: -14px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgba(239, 230, 210, 0.7);
+  filter: blur(3px);
+  opacity: 0;
+}
+.cake.is-blown .cake-smoke i { animation: wisp 2.6s ease-out forwards; }
+.cake.is-blown .cake-smoke i:nth-child(2) { animation-delay: 0.3s; }
+.cake.is-blown .cake-smoke i:nth-child(3) { animation-delay: 0.6s; }
+@keyframes wisp {
+  0% { opacity: 0; transform: translate(0, 0) scale(0.6); }
+  25% { opacity: 0.75; }
+  100% { opacity: 0; transform: translate(10px, -70px) scale(2.2); }
+}
+.cake-controls { margin-top: clamp(14px, calc(var(--sh) * 0.026), 24px); text-shadow: none; }
+.cake-controls .btn { background: #fff8ea; border-color: #fff8ea; color: var(--ink); }
+.cake-controls .btn:hover { background: #fff; color: var(--oxblood); }
+.cake-controls .btn--ghost { background: rgba(40, 14, 30, 0.28); color: #fff8ea; border-color: rgba(255, 248, 234, 0.85); }
+.cake-controls .btn--ghost:hover { background: #fff8ea; color: var(--ink); }
+.cake-controls .msg { margin-top: 10px; color: #fff8ea; text-shadow: 0 1px 10px rgba(60, 14, 40, 0.6); }
+.cake-wish { top: 34%; display: none; rotate: 1.2deg; }
+.cake-wish.is-on { display: block; animation: pop 0.8s var(--ease) 0.9s backwards; }
+/* the ledge the cake stands on */
+.parapet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  height: 8.5%;
+  background-color: #dccaa6;
+  background-image: linear-gradient(180deg, #f3e7cc 0 14%, rgba(90, 60, 30, 0.25) 14% 17%, transparent 17%), var(--noise);
+  box-shadow: 0 -14px 24px -10px rgba(50, 14, 34, 0.4);
+}
+
+/* ---------- 11. OUTSIDE AGAIN ---------- */
+.goodbye { color: #fff8ea; }
+.goodbye > .cam { background: #1d1620; }
+.bye-bg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+.bye-bg img { width: 100%; height: 100%; object-fit: cover; }
+.bye-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(0deg, rgba(22, 14, 30, 0.86), rgba(22, 14, 30, 0.2) 58%),
+    linear-gradient(90deg, rgba(22, 14, 30, 0.5), rgba(22, 14, 30, 0) 60%),
+    rgba(44, 32, 70, 0.3);
+}
+.bye-copy {
+  position: absolute;
+  left: 6%;
+  bottom: 12%;
+  z-index: 2;
+  --lock-script: #f3dfae;
+  --lock-caps: #fff8ea;
+  --lock-note: rgba(255, 247, 230, 0.94);
+}
+.bye-copy .sign { text-align: left; color: #f3dfae; margin: 18px 0 22px; }
+
+/* ---------- phones ---------- */
+@media (max-width: 760px) {
+  .stamp { display: none; }
+  .deco-a { right: 6%; top: 9%; }
+  .deco-b { left: 6%; bottom: 12%; }
+  .kicker { font-size: 10.5px; letter-spacing: 0.28em; }
+  .kicker::before,
+  .kicker::after { width: 26px; }
+
+  .hall-script { top: 5%; bottom: auto; left: 5%; font-size: calc(var(--sw) * 0.158); }
+  .letter-set { left: 6%; width: 88%; top: 52%; }
+  .envelope { display: none; }
+  .hall-note { display: none; }
+  .hall-shade { background: linear-gradient(0deg, rgba(40, 24, 10, 0.5), rgba(40, 24, 10, 0.2)); }
+
+  .wall-title { top: calc(var(--sh) * 0.2); }
+
+  .vanity-layout { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 1fr; gap: 2%; padding: 9% 6% 15%; align-items: start; justify-items: center; }
+  .vanity-panel { min-height: 0; width: 100%; padding: 22px 24px 20px; }
+  .panel-dot { display: none; }
+  .vanity .lock-script { font-size: calc(var(--sw) * 0.118); }
+  .mirror-text { left: 12%; right: 12%; font-size: calc(var(--sw) * 0.06); }
+  .panel-note { margin-top: 12px; font-size: 16px; }
+  .vanity-count { margin-top: 10px; }
+  .mirror-wrap { height: min(calc(var(--sh) * 0.52), calc(var(--sw) * 1.02)); align-self: center; }
+
+  .living-eyebrow { top: 4.5%; }
+  .record-stage { left: 50%; top: 28%; height: calc(var(--sw) * 0.7); translate: -50% -50%; }
+  .vinyl--back { display: none; }
+  .kraft-note { right: -2%; bottom: 0; font-size: 26px; }
+  .living-copy { left: 7%; top: auto; bottom: 11%; width: 80%; translate: none; }
+  /* on a phone the record's own arc says "songs on repeat", so the list starts straight away,
+     with each artist beside its title: room for the playlist to keep growing */
+  .living-copy .lock { display: none; }
+  .tracks { margin-top: 0; }
+  .tracks li { --row-pad: 6px; font-size: 10.5px; }
+  .track-by { display: inline; margin: 0 0 0 8px; font-size: 12.5px; }
+  .track-play { width: 18px; height: 18px; opacity: 0.75; }
+  .names-strip { padding-left: 0; }
+  .names-label { font-size: 24px; }
+  .filmstrip { width: 21%; right: -9%; top: 36%; height: 80%; }
+  .living-foot { display: none; }
+
+  .reel-layout { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto; align-content: center; justify-items: center; gap: 3%; padding: 8% 5% 14%; }
+  .disc-wrap { height: calc(var(--sw) * 0.9); }
+  .disc-title { font-size: calc(var(--sw) * 0.07); }
+  .disc-label { font-size: 7.5px; }
+  .viewer { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 0 18px; width: 100%; }
+  .viewer .lock { grid-column: 2; align-self: end; }
+  .viewer-slide { grid-column: 1; grid-row: 1 / span 3; margin-top: 0; width: calc(var(--sw) * 0.34); box-shadow: 0 0 0 6px #f3ead3, 0 0 0 7px rgba(90, 70, 30, 0.45), 0 20px 24px -12px rgba(20, 14, 6, 0.65); }
+  .slide-no { grid-column: 2; margin-top: 12px; }
+  .slide-caption { grid-column: 2; align-self: start; font-size: 16px; }
+
+  .sky { height: 46%; }
+  .wish-card { top: 74%; }
+  .roof-copy { left: 6%; right: 6%; bottom: auto; top: 46%; }
+  .roof-copy .lock-note { margin-top: 8px; font-size: 15px; }
+  .cake-controls { margin-top: 10px; }
+  .cake-set { right: 4%; bottom: 7.4%; width: min(46%, calc(var(--sh) * 0.25)); }
+  .cake-controls .btn { padding: 12px 13px; font-size: 10px; letter-spacing: 0.16em; }
+  .cake-wish { top: 26%; }
+
+  .bye-copy { left: 7%; right: 7%; bottom: 12%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vinyl, .come-in svg, .bulb-g, .run-track, .cake-svg .flame, .cake-flame { animation: none !important; }
+}
+
+/* ---------- optional art (js/content.js): each rule applies only once its picture is saved ---------- */
+/* outside: a brass key over "come in" */
+.has-key .come-in svg { display: none; }
+.has-key .come-in::before {
+  content: "";
+  width: 22px;
+  height: 52px;
+  background: var(--img-key) center / contain no-repeat;
+  filter: drop-shadow(0 3px 4px rgba(20, 12, 4, 0.5));
+  animation: bob 2.6s ease-in-out infinite;
+}
+/* front hall: the envelope, and the wax seal with the N pressed into it */
+.has-envelope .env-back,
+.has-envelope .env-flap,
+.has-envelope .env-front { display: none; }
+.has-envelope .envelope {
+  left: -13%;
+  bottom: -19%;
+  width: 56%;
+  aspect-ratio: 900 / 851;
+  rotate: -10deg;
+  background: var(--img-envelope) center / contain no-repeat;
+}
+.has-seal .seal { background: var(--img-seal) center / contain no-repeat; box-shadow: none; border-radius: 0; }
+.has-seal .seal i { color: rgba(44, 4, 10, 0.72); text-shadow: 0 1px 0 rgba(255, 196, 186, 0.5), 0 -1px 0 rgba(20, 0, 4, 0.35); }
+/* vanity: a few things on the dressing table at the foot of the mirror */
+.vanity-props {
+  display: none;
+  position: absolute;
+  left: 50%;
+  bottom: -7%;
+  z-index: 2;
+  width: 92%;
+  aspect-ratio: 1.5;
+  translate: -50% 0;
+  background: var(--img-vanityProps) center bottom / contain no-repeat;
+  filter: drop-shadow(0 18px 14px rgba(110, 50, 30, 0.35));
+  pointer-events: none;
+}
+.has-vanityProps .vanity-props { display: block; }
+/* living room: a painted red wall, and a real record */
+.has-livingWall .living-bg {
+  filter: brightness(0.8) saturate(0.88);
+  background-image: linear-gradient(100deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0) 34%, rgba(0, 0, 0, 0) 70%, rgba(0, 0, 0, 0.14)), var(--img-livingWall);
+  background-size: auto, cover;
+  background-position: center;
+}
+.has-vinyl .vinyl { background: var(--img-vinyl) center / 100% 100% no-repeat; }
+.has-vinyl .vinyl::after { display: none; }
+/* reel: its own painting behind the disc, instead of the garden from outside */
+.has-reelBg .reel-bg { background-image: var(--img-reelBg); background-position: center; }
+/* rooftop: a painted night sky once the candle is out */
+.has-skyNight .sky-night { background: var(--img-skyNight) center / cover; mix-blend-mode: normal; }
+.has-skyNight .rooftop.is-night .sky-night { opacity: 1; }
+/* outside again: the house at night needs less shade over it */
+.has-houseNight .bye-shade {
+  background: linear-gradient(0deg, rgba(22, 14, 30, 0.8), rgba(22, 14, 30, 0) 55%), linear-gradient(90deg, rgba(22, 14, 30, 0.42), rgba(22, 14, 30, 0) 60%);
+}
+@media (max-width: 760px) {
+  .vanity-props { width: 100%; bottom: -9%; }
+}

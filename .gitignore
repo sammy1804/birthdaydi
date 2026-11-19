@@ -1,0 +1,4 @@
+.claude/
+.DS_Store
+# full-size backups of every photo and painting; the site uses the lighter copies
+assets/originals/
