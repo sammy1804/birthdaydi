@@ -171,11 +171,14 @@ window.DIDI = {
     { src: "assets/photos/chat/photo-21.jpg", caption: "photo 04, add the story" },
     { src: "assets/photos/chat/photo-16.jpg", caption: "photo 05, add the story" },
     { src: "assets/photos/chat/photo-24.jpg", caption: "photo 06, add the story" },
+    { src: "assets/journal/wedding/wedding-04.jpg" },
+    { src: "assets/journal/himachal/himachal-clip-01.mp4" },
     { src: "assets/photos/chat/photo-19.jpg", caption: "photo 07, add the story" },
     { src: "assets/photos/chat/photo-18.jpg", caption: "photo 08, add the story" },
     { src: "assets/photos/chat/photo-23.jpg", caption: "photo 09, add the story" },
     { src: "assets/photos/didi/didi-01.jpg", caption: "photo 10, add the story" },
     { src: "assets/photos/chat/photo-12.jpg", caption: "photo 12, add the story" },
+    { src: "assets/journal/moments/moments-01.jpg" },
     { src: "assets/photos/chat/photo-05.jpg", caption: "photo 13, add the story" },
     { src: "assets/photos/chat/photo-01.jpg", caption: "photo 14, add the story" },
     { src: "assets/photos/chat/photo-04.jpg", caption: "photo 15, add the story" },
@@ -186,11 +189,14 @@ window.DIDI = {
     { src: "assets/photos/chat/photo-08.jpg", caption: "photo 19, add the story" },
     { src: "assets/photos/chat/photo-11.jpg", caption: "photo 20, add the story" },
     { src: "assets/photos/chat/photo-14.jpg", caption: "photo 21, add the story" },
+    { src: "assets/journal/wedding/wedding-06.jpg" },
+    { src: "assets/journal/moments/moments-clip-02.mp4" },
     { src: "assets/photos/chat/photo-22.jpg", caption: "photo 22, add the story" },
     { src: "assets/photos/chat/photo-02.jpg", caption: "photo 23, add the story" },
     { src: "assets/photos/chat/photo-07.jpg", caption: "photo 24, add the story" },
     { src: "assets/photos/chat/photo-09.jpg", caption: "photo 25, add the story" },
     { src: "assets/photos/chat/photo-17.jpg", caption: "photo 26, add the story" },
+    { src: "assets/journal/moments/moments-02.jpg" },
     { src: "assets/photos/chat/photo-20.jpg", caption: "photo 27, add the story" },
     { src: "assets/photos/chat/photo-15.jpg", caption: "photo 28, add the story" },
     { src: "assets/photos/chat/photo-10.jpg", caption: "photo 32, add the story" },
@@ -200,6 +206,10 @@ window.DIDI = {
     { src: "assets/journal/goa/goa-22.jpg" },
     { src: "assets/photos/didi/didi-04.jpg" },
     { src: "assets/photos/us/us-02.jpg" },
+    { src: "assets/journal/wedding/wedding-03.jpg" },
+    { src: "assets/journal/wedding/wedding-clip-03.mp4" },
+    { src: "assets/journal/wedding/wedding-05.jpg" },
+    { src: "assets/journal/himachal/himachal-10.jpg" },
     { src: "assets/photos/didi/didi-05.jpg" },
     { src: "assets/journal/goa/goa-25.jpg" },
     { src: "assets/photos/us/us-03.jpg" },
@@ -274,7 +284,7 @@ window.DIDI = {
     { src: "assets/journal/people/people-03.jpg", caption: "The one I love, the one I adore, the one I look after." },
     { src: "assets/journal/people/people-04.jpg", caption: "You'd do anything for me, and I'd do anything for you." },
     { src: "assets/journal/people/people-05.jpg", caption: "I know you love me more. I'm still trying to catch up." },
-    { src: "assets/journal/people/people-06.jpg", caption: "Married, and still my person. That never changes." },
+    { src: "assets/journal/wedding/wedding-04.jpg", caption: "Married, and still my person. That never changes." },
     { caption: "When I was little", note: "You used to scare me with your eye-rolling and all of it. It was so much fun. I still remember those days.", stickers: ["ghost"] },
     { srcs: ["assets/journal/you/you-01.jpg", "assets/journal/you/you-clip-02.mp4", "assets/journal/you/you-03.jpg"], caption: "Even when I don't show it, you matter more than anything." },
     { srcs: ["assets/journal/you/you-04.jpg", "assets/journal/you/you-clip-03.mp4", "assets/journal/you/you-05.jpg", "assets/journal/you/you-02.jpg"], caption: "If you ever want to kill someone, I'm there. No questions asked." },
@@ -292,13 +302,20 @@ window.DIDI = {
     // Himachal, then Kasol. More photos from this trip are saved in assets/journal/himachal
     // (05 to 09), ready for another page.
     { srcs: ["assets/journal/himachal/himachal-01.jpg", "assets/journal/himachal/himachal-02.jpg", "assets/journal/himachal/himachal-03.jpg", "assets/journal/himachal/himachal-04.jpg"], caption: "Himachal, all of us together", place: "Himachal" },
+    { srcs: ["assets/journal/himachal/himachal-clip-01.mp4", "assets/journal/himachal/himachal-10.jpg"], caption: "Back in the mountains, dupatta flying, then bundled up in the snow", place: "Himachal" },
     { srcs: ["assets/journal/kasol/kasol-01.jpg", "assets/journal/kasol/kasol-02.jpg", "assets/journal/kasol/kasol-03.jpg"], caption: "Then Kasol, and the night we went looking for a rave", place: "Kasol", note: "The night hike to find the rave party, which was not exactly a rave. Finding it was the fun part, and crossing that bridge, where I was the only one scared." },
     { srcs: ["assets/photos/didi/didi-02.jpg", "assets/photos/didi/didi-03.jpg", "assets/photos/didi/didi-04.jpg"], caption: "You'll always be there for me, and I'll always be there for you." },
     { srcs: ["assets/photos/didi/didi-05.jpg", "assets/photos/us/us-01.jpg", "assets/photos/us/us-02.jpg", "assets/photos/didi/didi-06.jpg"], caption: "I'll keep looking after you. Always." },
     { src: "assets/journal/manali/manali-01.jpg", caption: "Our first trip, Manali", place: "Manali", date: "during covid", note: "The college trip: my friend, you, our other cousin and me. We stayed in hostels, and that's where we opened up." },
     { src: "assets/journal/jaipur/jaipur-01.jpg", caption: "Then Jaipur, a little haunted", place: "Jaipur", note: "We stayed somewhere a little haunted and had the most fun." },
     { src: "assets/journal/shimla/shimla-01.jpg", caption: "Shimla, then Nani's house", place: "Shimla", note: "So many memories from those days, and every one of them is a good one." },
-    { src: "assets/journal/wedding/wedding-01.jpg", caption: "The wedding, and the memories around it", stickers: ["rings", "marigold"] },
+    { src: "assets/journal/wedding/wedding-01.jpg", caption: "Your wedding day, with all of us around you", stickers: ["rings", "marigold"] },
+    { src: "assets/journal/wedding/wedding-03.jpg", caption: "Shweta and Utsav, stitched in thread", stickers: ["rings", "marigold"] },
+    { srcs: ["assets/journal/wedding/wedding-clip-03.mp4", "assets/journal/wedding/wedding-06.jpg", "assets/journal/wedding/wedding-clip-06.mp4"], caption: "The flowers, the kaleere, and you walking in like you owned the place" },
+    { srcs: ["assets/journal/wedding/wedding-02.jpg", "assets/journal/wedding/wedding-05.jpg", "assets/journal/wedding/wedding-clip-02.mp4"], caption: "The bride-to-be, the girls on the rooftop, and all of us squeezed into one selfie", stickers: ["rings"] },
+    { srcs: ["assets/journal/wedding/wedding-clip-04.mp4", "assets/journal/wedding/wedding-clip-05.mp4"], caption: "All dressed up, and still the prettiest in the room" },
+    { srcs: ["assets/journal/moments/moments-01.jpg", "assets/journal/moments/moments-02.jpg"], caption: "That face, and that hug. Both are mine." },
+    { srcs: ["assets/journal/moments/moments-clip-02.mp4", "assets/journal/moments/moments-clip-01.mp4", "assets/journal/moments/moments-clip-03.mp4"], caption: "Just you, being you." },
     { src: "assets/journal/mysore/mysore-01.jpg", caption: "Mysore, when you came to Bangalore", place: "Mysore" },
 
     // The letter: the last pages of the book, in my own words, for her to keep.
@@ -329,7 +346,7 @@ window.DIDI = {
   journalCover: "assets/journal/people/people-02.jpg",
 
   // ---------------- THE GAME TABLE ----------------
-  // Six games. Nothing here asks about our trips for now: those games are put away below,
+  // Seven games. Nothing here asks about our trips for now: those games are put away below,
   // ready for when the real answers are written in.
 
   // 01. Find Didi: the lights are off and she has a torch. In each photo she taps her own face.
@@ -342,7 +359,6 @@ window.DIDI = {
     { src: "assets/journal/goa/goa-22.jpg", x: 39, y: 55, r: 8 },
     { src: "assets/journal/goa/goa-23.jpg", x: 60.0, y: 56.4, r: 7 },
     { src: "assets/photos/us/us-02.jpg", x: 37.5, y: 53.3, r: 6 },
-    { src: "assets/journal/people/people-06.jpg", x: 18.6, y: 34.5, r: 6.5 },
     { src: "assets/journal/goa/goa-21.jpg", x: 44.8, y: 52.4, r: 9 },
     { src: "assets/journal/goa/goa-24.jpg", x: 50.2, y: 57.0, r: 7 },
     { src: "assets/journal/people/people-02.jpg", x: 66.2, y: 59.9, r: 6.5 },
@@ -352,6 +368,9 @@ window.DIDI = {
     { src: "assets/journal/goa/goa-20.jpg", x: 53.3, y: 47.9, r: 5 },
     { src: "assets/journal/goa/goa-15.jpg", x: 53.0, y: 37.6, r: 5 },
     { src: "assets/journal/people/people-01.jpg", x: 21, y: 49, r: 7 },
+    { src: "assets/journal/wedding/wedding-01.jpg", x: 61.5, y: 28.5, r: 4 },
+    { src: "assets/journal/wedding/wedding-02.jpg", x: 47, y: 34, r: 3.5 },
+    { src: "assets/journal/wedding/wedding-04.jpg", x: 87, y: 52.5, r: 6 },
   ],
 
   // 02. Spot the difference: the second picture of each pair has five things changed.
@@ -379,8 +398,13 @@ window.DIDI = {
     "assets/journal/goa/goa-25.jpg",
     "assets/journal/goa/goa-18.jpg",
     "assets/journal/people/people-03.jpg",
-    "assets/journal/people/people-06.jpg",
     "assets/journal/goa/goa-20.jpg",
+    "assets/journal/wedding/wedding-01.jpg",
+    "assets/journal/wedding/wedding-02.jpg",
+    "assets/journal/moments/moments-01.jpg",
+    "assets/journal/moments/moments-02.jpg",
+    "assets/journal/wedding/wedding-04.jpg",
+    "assets/journal/wedding/wedding-06.jpg",
   ],
   // if the photos cannot load, the cards use these stickers instead
   memoryTiles: ["star", "heart", "moon", "flower", "bow", "sparkle", "cherry", "leaf"],
@@ -391,6 +415,9 @@ window.DIDI = {
     { src: "assets/photos/didi/didi-04.jpg", name: "a photo" },
     { src: "assets/journal/goa/goa-15.jpg", name: "a photo" },
     { src: "assets/journal/goa/goa-22.jpg", name: "a photo" },
+    { src: "assets/journal/wedding/wedding-01.jpg", name: "the family" },
+    { src: "assets/journal/moments/moments-02.jpg", name: "the hug" },
+    { src: "assets/journal/wedding/wedding-03.jpg", name: "the keepsake" },
   ],
 
   // 05. The odd one out: everyday things, one doesn't belong. `odd` is its place in the list
@@ -433,6 +460,28 @@ window.DIDI = {
     { word: "BEACH", hint: "sand in everything" },
     { word: "BIRTHDAY GIRL", hint: "you, today" },
   ],
+
+  // 07. The treasure hunt: a riddle at a time. Each answer she solves turns up a photo, and the
+  //     last one opens the treasure. `answer` is what she types; `also` are other answers that
+  //     count. Spaces, capitals and a "the" in front don't matter. `hint` is offered if she asks.
+  //     `photo` turns up when it's solved, and `found` is said with it.
+  hunt: {
+    riddles: [
+      { riddle: "I have a face but never a smile of my own. I only smile when you do, and in this house I only say kind things.", answer: "mirror", hint: "You walked past me at the vanity.", photo: "assets/photos/didi/didi-01.jpg", found: "The mirror was right. You are the prettiest." },
+      { riddle: "Orange on the first day, deep brown by the second. I sit on a bride's hands, and the darker I get, the more you're loved.", answer: "mehendi", also: ["mehndi", "henna"], hint: "Before every wedding, the aunties sit you down for me.", photo: "assets/journal/wedding/wedding-02.jpg", found: "The bride-to-be, and the girls who stayed up with her." },
+      { riddle: "I whistle three times but I'm not a referee. Every kitchen in the country has me, and somebody is always counting my calls.", answer: "pressure cooker", also: ["cooker"], hint: "Dal, rajma and chole all go into me.", photo: "assets/photos/us/us-01.jpg", found: "Found: the sound of every home we've ever had." },
+      { riddle: "The more of me you take, the more you leave behind. We left a lot of me on every trip.", answer: "footsteps", also: ["steps", "footprints", "footstep"], hint: "Look down while you walk.", photo: "assets/journal/goa/goa-22.jpg", found: "Every trip, side by side." },
+      { riddle: "Everyone takes one more, because somebody always blinked. I'm taken at every wedding, every trip and every dinner.", answer: "selfie", also: ["photo", "picture", "photograph"], hint: "Hold the phone out, and smile.", photo: "assets/journal/moments/moments-01.jpg", found: "And this one. The pout of the century." },
+      { riddle: "I can be broken without anyone touching me, and kept without a box. I'm the thing you made me when you said you'd always be there.", answer: "promise", also: ["a promise"], hint: "Pinky ____.", photo: "assets/journal/moments/moments-02.jpg", found: "Kept. Every single one." },
+      { riddle: "I'm lit once a year just for you, I melt while you make a wish, and then you blow me out.", answer: "candle", also: ["candles", "birthday candle"], hint: "Look on top of the cake.", photo: "assets/journal/people/people-02.jpg", found: "Save the wish. It's waiting on the rooftop." },
+      { riddle: "Everyone has one, nobody can lose it, and every year you get another. Today is yours.", answer: "birthday", also: ["bday", "birth day"], hint: "Happy ________, Didi.", photo: "assets/journal/wedding/wedding-01.jpg", found: "The last clue. The treasure is open." },
+    ],
+    // what's inside the treasure chest at the end
+    treasure: {
+      title: "You found the treasure",
+      note: "It was never in the box. It was every one of these, and it's you. Happy birthday, Didi.",
+    },
+  },
 
   // ---------- put away for now ----------
   // These games ask about our trips and family. They are off the table until the answers are

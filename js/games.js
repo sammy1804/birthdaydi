@@ -1,5 +1,5 @@
 /* ============================================================
-   games.js: the six games on the game table.
+   games.js: the seven games on the game table.
 
      find Didi             the lights are off; with a torch she finds herself in our photos
      spot the difference   five things changed in the second picture
@@ -7,6 +7,7 @@
      in pieces             a sliding puzzle: two sizes, four pictures, a peek
      the odd one out       four everyday things, one doesn't belong
      save the candles      guess the word; each wrong letter blows out a candle
+     the treasure hunt     a riddle at a time; each answer turns up a photo, the last opens the chest
 
    Put away for now (their pieces wait in <template id="games-put-away">, and the code
    below does nothing while they are off the table): the trip quiz, the trips in order,
@@ -1524,7 +1525,198 @@
     }
   }
 
+  /* ============================================================
+     THE TREASURE HUNT: a riddle at a time; each answer turns up a
+     photo, and the last one opens the chest
+     ============================================================ */
+  function hunt() {
+    const H = D.hunt || {};
+    const all = (H.riddles || []).filter((r) => r.riddle && r.answer);
+    const play = $("#hu-play");
+    if (!all.length || !play) return;
+    const trail = $("#hu-trail");
+    const countEl = $("#hu-count");
+    const foundEl = $("#hu-found");
+    const numEl = $("#hu-num");
+    const riddleEl = $("#hu-riddle");
+    const blanks = $("#hu-blanks");
+    const hintText = $("#hu-hint-text");
+    const clue = $("#hu-clue");
+    const foundCard = $("#hu-found-card");
+    const photo = $("#hu-photo");
+    const foundLine = $("#hu-found-line");
+    const form = $("#hu-form");
+    const input = $("#hu-input");
+    const msg = $("#hu-msg");
+    const hintBtn = $("#hu-hint");
+    const next = $("#hu-next");
+    const end = $("#hu-end");
+    const KEY = "didi-hunt-v1";
+
+    // spaces, capitals, punctuation and a "the" or "a" in front don't matter
+    const norm = (s) => String(s || "").toLowerCase().replace(/^\s*(the|a|an|my)\s+/, "").replace(/[^a-z]/g, "");
+    // one letter off still counts on longer words
+    function close(a, b) {
+      if (a === b) return true;
+      if (b.length >= 5 && a.length <= b.length + 8 && a.includes(b)) return true; // "pinky promise"
+      if (b.length < 6 || Math.abs(a.length - b.length) > 1) return false;
+      const d = Array.from({ length: a.length + 1 }, (_, i) => [i]);
+      for (let j = 1; j <= b.length; j++) d[0][j] = j;
+      for (let i = 1; i <= a.length; i++) {
+        for (let j = 1; j <= b.length; j++) {
+          d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+        }
+      }
+      return d[a.length][b.length] <= 1;
+    }
+    const answers = (r) => [r.answer].concat(r.also || []).map(norm).filter(Boolean);
+
+    let pos = 0;
+    let hints = 0;
+    let solved = false;
+    try { pos = Math.min(all.length, Number(localStorage.getItem(KEY)) || 0); } catch (e) { pos = 0; }
+    const remember = () => { try { localStorage.setItem(KEY, String(pos)); } catch (e) { /* fine */ } };
+
+    function drawTrail() {
+      trail.replaceChildren();
+      all.forEach((r, i) => {
+        const li = el("li", "hu-step" + (i < pos ? " is-done" : i === pos ? " is-here" : ""));
+        li.setAttribute("aria-label", i < pos ? "clue " + (i + 1) + ", solved" : "clue " + (i + 1));
+        trail.appendChild(li);
+      });
+      const x = el("li", "hu-step hu-step--x" + (pos >= all.length ? " is-done" : ""));
+      x.setAttribute("aria-label", "the treasure");
+      trail.appendChild(x);
+      foundEl.textContent = String(Math.min(pos, all.length));
+    }
+    function drawBlanks(r, shown) {
+      blanks.replaceChildren();
+      const word = r.answer.toUpperCase();
+      let letter = 0;
+      word.split(" ").forEach((w) => {
+        const g = el("span", "hu-word");
+        for (const ch of w) {
+          const isLetter = /[A-Z]/.test(ch);
+          g.appendChild(el("span", "hu-slot", isLetter && letter < shown ? ch : isLetter ? "" : ch));
+          if (isLetter) letter += 1;
+        }
+        blanks.appendChild(g);
+      });
+    }
+    function show() {
+      if (pos >= all.length) { finish(); return; }
+      const r = all[pos];
+      solved = false;
+      hints = 0;
+      play.hidden = false;
+      end.hidden = true;
+      clue.hidden = false;
+      foundCard.hidden = true;
+      form.hidden = false;
+      numEl.textContent = "clue " + (pos + 1);
+      riddleEl.textContent = r.riddle;
+      hintText.textContent = "";
+      drawBlanks(r, 0);
+      input.value = "";
+      input.disabled = false;
+      msg.textContent = "";
+      msg.className = "msg";
+      hintBtn.disabled = false;
+      hintBtn.textContent = "A hint, please";
+      next.disabled = true;
+      next.textContent = pos === all.length - 1 ? "Open the treasure" : "Next clue";
+      countEl.textContent = (pos + 1) + " of " + all.length;
+      drawTrail();
+    }
+    function solve(gaveUp) {
+      const r = all[pos];
+      const n = pos + 1;
+      solved = true;
+      input.disabled = true;
+      hintBtn.disabled = true;
+      form.hidden = true;
+      drawBlanks(r, 99);
+      msg.textContent = gaveUp ? "it was " + r.answer + ". you'd have got it." : ["yes!", "you got it.", "of course you did.", "too easy for you."][Math.floor(Math.random() * 4)];
+      msg.className = "msg good";
+      const reveal = () => {
+        clue.hidden = true;
+        foundCard.hidden = false;
+        foundLine.textContent = r.found || "";
+        pop(foundCard);
+      };
+      if (r.photo) {
+        loads(r.photo).then((ok) => {
+          if (ok) { photo.src = r.photo; photo.alt = "A photo, found with clue " + n; setTimeout(reveal, reduce ? 0 : 650); }
+        });
+      }
+      pos += 1;
+      remember();
+      drawTrail();
+      next.disabled = false;
+      next.focus({ preventScroll: true });
+    }
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (solved) return;
+      const r = all[pos];
+      const said = norm(input.value);
+      if (!said) { nudge(input); return; }
+      if (answers(r).some((a) => close(said, a))) { solve(false); return; }
+      nudge(form);
+      msg.textContent = ["not quite. read it once more.", "close your eyes and think.", "no, but you're on the trail.", "try another word."][Math.floor(Math.random() * 4)];
+      msg.className = "msg bad";
+      input.select();
+    });
+    hintBtn.addEventListener("click", () => {
+      if (solved) return;
+      const r = all[pos];
+      hints += 1;
+      if (hints === 1) {
+        hintText.textContent = r.hint || "Look at how many letters it has.";
+        hintBtn.textContent = "Another hint";
+      } else if (hints === 2) {
+        drawBlanks(r, 1);
+        hintText.textContent = (r.hint ? r.hint + " " : "") + "It starts with " + r.answer.charAt(0).toUpperCase() + ".";
+        hintBtn.textContent = "Just tell me";
+      } else {
+        solve(true);
+      }
+      input.focus({ preventScroll: true });
+    });
+    next.addEventListener("click", show);
+
+    function finish() {
+      const T = H.treasure || {};
+      play.hidden = true;
+      end.hidden = false;
+      $("#hu-t-title").textContent = T.title || "You found the treasure";
+      $("#hu-t-note").textContent = T.note || "";
+      const fan = $("#hu-fan");
+      fan.replaceChildren();
+      const pics = all.map((r) => r.photo).filter(Boolean);
+      pics.forEach((src, i) => {
+        const im = el("img", "hu-fan-pic");
+        im.alt = "";
+        im.draggable = false;
+        im.style.setProperty("--i", String(i - (pics.length - 1) / 2));
+        im.onerror = () => im.remove();
+        im.src = src;
+        fan.appendChild(im);
+      });
+      countEl.textContent = all.length + " of " + all.length;
+      drawTrail();
+      end.classList.remove("is-open");
+      requestAnimationFrame(() => requestAnimationFrame(() => end.classList.add("is-open")));
+    }
+    $("#hu-again").addEventListener("click", () => { pos = 0; remember(); show(); });
+    document.addEventListener("didi:game", (e) => {
+      if (e.detail === "game-hunt" && pos >= all.length) finish();
+    });
+    show();
+  }
+
   function init() {
+    hunt();
     findDidi();
     spotDiff();
     memory();

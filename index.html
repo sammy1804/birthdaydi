@@ -12,11 +12,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Pinyon+Script&family=Reenie+Beanie&display=swap" rel="stylesheet" />
   <!-- a Korean handwriting font, only for the few Korean words in the journal (안녕하세요, 잘 지내셨어, 월요일 안녕) -->
   <link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&text=%EB%82%B4%EB%85%95%EC%84%B8%EC%85%A8%EC%95%88%EC%96%B4%EC%9A%94%EC%9B%94%EC%9D%BC%EC%9E%98%EC%A7%80%ED%95%98&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/house.css?v=52" />
-  <link rel="stylesheet" href="css/rooms.css?v=52" />
-  <link rel="stylesheet" href="css/journal.css?v=52" />
-  <link rel="stylesheet" href="css/games.css?v=52" />
-  <link rel="stylesheet" href="css/studio.css?v=52" />
+  <link rel="stylesheet" href="css/house.css?v=54" />
+  <link rel="stylesheet" href="css/rooms.css?v=53" />
+  <link rel="stylesheet" href="css/journal.css?v=53" />
+  <link rel="stylesheet" href="css/games.css?v=58" />
+  <link rel="stylesheet" href="css/studio.css?v=55" />
   <noscript><style>.gate { display: none !important; }</style></noscript>
 </head>
 <body>
@@ -279,16 +279,17 @@
       </div>
     </section>
 
-    <!-- 8. THE GAME TABLE: six little games -->
+    <!-- 8. THE GAME TABLE: seven little games -->
     <section class="scene games" id="games" data-where="the game table" data-room="Games">
       <div class="cam">
         <div class="pan" id="games-pan">
           <div class="wall wall--damask" aria-hidden="true"><i class="wall-skirt"></i><i class="wall-floor"></i></div>
           <div class="room-body">
+            <span class="painted-mandala pm--games" data-mandala="folk" data-story="folk" aria-hidden="true"></span>
             <header class="games-head lock arrive">
               <p class="lock-script">for a brain</p>
               <h2 class="lock-caps">that never stops</h2>
-              <p class="lock-note">Six little games. No timers, no pressure. Pick one up.</p>
+              <p class="lock-note">Seven little games, and a treasure at the end of one. No timers, no pressure. Pick one up.</p>
             </header>
             <div class="games-wall arrive d2" id="games-wall" aria-hidden="true">
               <figure class="wframe f-round"><div class="photo"></div></figure>
@@ -316,6 +317,10 @@
               <button class="toy toy--odd" type="button" data-game="game-odd">
                 <span class="toy-art" aria-hidden="true"><i class="card c1"></i><i class="card c2"></i><i class="card c3"><b>?</b><em>which one doesn&rsquo;t belong</em></i><i class="clip"></i></span>
                 <span class="toy-name">the odd one out</span>
+              </button>
+              <button class="toy toy--hunt" type="button" data-game="game-hunt">
+                <span class="toy-art" aria-hidden="true"><i class="hmap"><i class="hmap-path"></i><i class="hmap-x"></i><i class="hmap-roll"></i></i><i class="hkey"></i></span>
+                <span class="toy-name">the treasure hunt</span>
               </button>
               <button class="toy toy--candles" type="button" data-game="game-candles">
                 <span class="toy-art" aria-hidden="true"><i class="kcake"><i class="kc k1"><i></i></i><i class="kc k2 is-out"><i></i></i><i class="kc k3"><i></i></i><i class="kc k4"><i></i></i><i class="kcake-top"></i><i class="kcake-body"></i></i></span>
@@ -500,6 +505,7 @@
 
       <article class="game game--memory" id="game-memory" hidden>
         <header class="game-head"><h3>Memory</h3><p class="meta">moves <b id="mem-moves">0</b> &middot; pairs <b id="mem-pairs">0</b> of <span id="mem-total">8</span> <span class="meta-best" id="mem-best"></span></p></header>
+        <p class="game-how">Turn over two cards at a time and find the photos that match.</p>
         <div class="mem-grid" id="mem-grid"></div>
         <p class="msg" id="mem-msg" role="status" aria-live="polite"></p>
         <div class="row">
@@ -532,6 +538,43 @@
         <p class="msg" id="odd-msg" role="status" aria-live="polite"></p>
         <div class="row row--end">
           <button class="btn btn--small" type="button" id="odd-next" disabled>Next four</button>
+        </div>
+      </article>
+
+      <article class="game game--hunt" id="game-hunt" hidden>
+        <header class="game-head"><h3>The treasure hunt</h3><p class="meta">clue <span id="hu-count"></span> &middot; found <b id="hu-found">0</b></p></header>
+        <p class="game-how">Solve the riddle and type the answer. Every answer turns up a photo, and the last one opens the treasure.</p>
+        <ol class="hu-trail" id="hu-trail" aria-label="The trail to the treasure"></ol>
+        <div class="hu-play" id="hu-play">
+          <div class="hu-card" id="hu-card">
+            <div class="hu-clue" id="hu-clue">
+              <p class="hu-num" id="hu-num"></p>
+              <p class="hu-riddle" id="hu-riddle"></p>
+              <div class="hu-blanks" id="hu-blanks" aria-hidden="true"></div>
+              <p class="hu-hint" id="hu-hint-text" aria-live="polite"></p>
+            </div>
+            <figure class="hu-found" id="hu-found-card" hidden>
+              <img id="hu-photo" alt="" draggable="false">
+              <figcaption id="hu-found-line"></figcaption>
+            </figure>
+          </div>
+          <form class="hu-form" id="hu-form" autocomplete="off">
+            <label class="sr-only" for="hu-input">Your answer</label>
+            <input class="hu-input" id="hu-input" type="text" placeholder="your answer" autocapitalize="off" spellcheck="false">
+            <button class="btn btn--small" type="submit" id="hu-check">Check</button>
+          </form>
+          <p class="msg" id="hu-msg" role="status" aria-live="polite"></p>
+          <div class="row">
+            <button class="btn btn--ghost btn--small" type="button" id="hu-hint">A hint, please</button>
+            <button class="btn btn--small" type="button" id="hu-next" disabled>Next clue</button>
+          </div>
+        </div>
+        <div class="hu-end" id="hu-end" hidden>
+          <div class="hu-chest" aria-hidden="true"><i class="hu-lid"></i><i class="hu-glow"></i><i class="hu-box"></i><i class="hu-lock"></i></div>
+          <h4 class="hu-t-title" id="hu-t-title"></h4>
+          <div class="hu-fan" id="hu-fan"></div>
+          <p class="hu-t-note" id="hu-t-note"></p>
+          <div class="row row--end"><button class="btn btn--ghost btn--small" type="button" id="hu-again">Play it again</button></div>
         </div>
       </article>
 
@@ -645,11 +688,11 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <script src="js/content.js?v=52"></script>
-  <script src="js/art.js?v=52"></script>
-  <script src="js/games.js?v=52"></script>
-  <script src="js/studio.js?v=52"></script>
-  <script src="js/journal.js?v=52"></script>
-  <script src="js/house.js?v=52"></script>
+  <script src="js/content.js?v=55"></script>
+  <script src="js/art.js?v=53"></script>
+  <script src="js/games.js?v=56"></script>
+  <script src="js/studio.js?v=56"></script>
+  <script src="js/journal.js?v=53"></script>
+  <script src="js/house.js?v=53"></script>
 </body>
 </html>

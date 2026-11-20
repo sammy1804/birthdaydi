@@ -39,7 +39,21 @@
     { id: "peacock", name: "peacock", c: ["#d6e8dd", "#82bba7", "#2f7a6f", "#1f4e79", "#2d3a63", "#7d8c48", "#d9b55e"] },
     { id: "mehendi", name: "mehendi", c: ["#f1e5c8", "#d2ac72", "#a8662f", "#6e3a1d", "#b8c49a", "#6b7a45", "#38452a"] },
     { id: "monsoon", name: "monsoon", c: ["#e6eef0", "#a8c8d6", "#5f8fa8", "#2d3a63", "#c3b0d6", "#7b6aa0", "#3d4f4a"] },
+    { id: "folk", name: "folk art", c: ["#efe4d6", "#f2b7ad", "#d4584a", "#a8262f", "#e9c23c", "#9dbfae", "#6f7a3a"] },
+    { id: "pichwai", name: "pichwai", c: ["#fbf3e6", "#f7c28a", "#f0782f", "#c7461f", "#e8b23a", "#cfdcb0", "#4f6b2c"] },
   ];
+
+  // a small leaf from a to a tip at t, bulging k of its length to each side
+  function leafD(ax, ay, tx, ty, k) {
+    const mx = (ax + tx) / 2, my = (ay + ty) / 2;
+    const px = -(ty - ay) * k, py = (tx - ax) * k;
+    return `M${n2(ax)} ${n2(ay)}Q${n2(mx + px)} ${n2(my + py)} ${n2(tx)} ${n2(ty)}Q${n2(mx - px)} ${n2(my - py)} ${n2(ax)} ${n2(ay)}Z`;
+  }
+  // a pointed petal from a base at y0 to a tip at y1, half width ww
+  const pointed = (ww, y0, y1) => {
+    const hh = y0 - y1;
+    return `M0 ${n2(y0)}C${n2(ww * 1.3)} ${n2(y0 - hh * 0.25)} ${n2(ww * 1.05)} ${n2(y1 + hh * 0.25)} 0 ${n2(y1)}C${n2(-ww * 1.05)} ${n2(y1 + hh * 0.25)} ${n2(-ww * 1.3)} ${n2(y0 - hh * 0.25)} 0 ${n2(y0)}Z`;
+  };
 
   /* ---------- the shapes ----------
      Each shape is drawn in its own little frame: x runs along the ring, y points out from the
@@ -105,6 +119,54 @@
         ["i", `M${-ri} ${cy}A${ri} ${ri} 0 1 0 ${ri} ${cy}A${ri} ${ri} 0 1 0 ${-ri} ${cy}Z`],
       ];
     },
+    // the folk-art petal: a pointed petal, a lighter petal inside, and a leafy vein up the middle
+    folk: (w, h) => {
+      const veins = [`M${n2(-w * 0.035)} ${n2(h * 0.36)}L${n2(-w * 0.02)} ${n2(-h * 0.34)}L${n2(w * 0.02)} ${n2(-h * 0.34)}L${n2(w * 0.035)} ${n2(h * 0.36)}Z`];
+      for (let j = 0; j < 4; j++) {
+        const y = h * (0.24 - j * 0.15);
+        const s = w * (0.34 - j * 0.04);
+        veins.push(leafD(0, y, -s, y - s * 0.8, 0.28), leafD(0, y, s, y - s * 0.8, 0.28));
+      }
+      return [["a", pointed(w, h / 2, -h / 2)], ["i", pointed(w * 0.66, h * 0.42, -h * 0.4)], ["v", veins.join("")]];
+    },
+    // the onion-dome tile from folk art: a soft tile with a pointed top, a chevron and a little bud
+    ogee: (w, h) => [
+      ["a", `M0 ${-h / 2}C${w * 0.12} ${-h * 0.32} ${w * 0.95} ${-h * 0.3} ${w * 0.95} 0C${w * 0.95} ${h * 0.3} ${w * 0.62} ${h * 0.5} 0 ${h * 0.4}C${-w * 0.62} ${h * 0.5} ${-w * 0.95} ${h * 0.3} ${-w * 0.95} 0C${-w * 0.95} ${-h * 0.3} ${-w * 0.12} ${-h * 0.32} 0 ${-h / 2}Z`],
+      ["i", `M${-w * 0.62} ${-h * 0.06}Q0 ${h * 0.44} ${w * 0.62} ${-h * 0.06}Q0 ${h * 0.18} ${-w * 0.62} ${-h * 0.06}Z`],
+      ["b", `M0 ${h * 0.12}C${-w * 0.3} ${h * 0.08} ${-w * 0.32} ${-h * 0.12} ${-w * 0.2} ${-h * 0.2}L0 ${-h * 0.07}L${w * 0.2} ${-h * 0.2}C${w * 0.32} ${-h * 0.12} ${w * 0.3} ${h * 0.08} 0 ${h * 0.12}Z`],
+    ],
+    // a four-pointed sparkle
+    sparkle: (w, h) => {
+      const s = Math.min(w, h / 2), c = s * 0.16;
+      return [["a", `M0 ${-s}Q${c} ${-c} ${s} 0Q${c} ${c} 0 ${s}Q${-c} ${c} ${-s} 0Q${-c} ${-c} 0 ${-s}Z`]];
+    },
+    // the pichwai lotus: a tall middle petal, two petals curling out, and a little cup underneath
+    bloom: (w, h) => [
+      ["s", `M${-w * 0.08} ${h * 0.34}C${-w * 0.62} ${h * 0.3} ${-w * 0.98} ${h * 0.02} ${-w * 0.95} ${-h * 0.3}C${-w * 0.6} ${-h * 0.18} ${-w * 0.3} ${h * 0.02} ${-w * 0.08} ${h * 0.34}Z` +
+              `M${w * 0.08} ${h * 0.34}C${w * 0.62} ${h * 0.3} ${w * 0.98} ${h * 0.02} ${w * 0.95} ${-h * 0.3}C${w * 0.6} ${-h * 0.18} ${w * 0.3} ${h * 0.02} ${w * 0.08} ${h * 0.34}Z`],
+      ["c", pointed(w * 0.36, h * 0.36, -h / 2)],
+      ["b", `M${-w * 0.5} ${h * 0.24}Q0 ${h * 0.58} ${w * 0.5} ${h * 0.24}Q0 ${h * 0.36} ${-w * 0.5} ${h * 0.24}Z`],
+    ],
+    // a vine: a thin stem with leaves in pairs up it
+    sprig: (w, h) => {
+      const leaves = [];
+      for (let j = 0; j < 4; j++) {
+        const y = h * (0.3 - j * 0.2);
+        const s = Math.min(w * 0.7, h * 0.22) * (1 - j * 0.12);
+        leaves.push(leafD(0, y, -s, y - s * 0.75, 0.3), leafD(0, y, s, y - s * 0.75, 0.3));
+      }
+      leaves.push(leafD(0, -h * 0.32, 0, -h / 2, 0.3));
+      const t = Math.max(1.5, w * 0.04);
+      return [["s", `M${-t} ${h / 2}L${-t} ${-h * 0.34}L${t} ${-h * 0.34}L${t} ${h / 2}Z`], ["l", leaves.join("")]];
+    },
+    // a circle with a circle inside: the border of a colouring book page
+    hoop: (w, h) => {
+      const r = Math.min(w, h / 2) * 0.86, ri = r * 0.5;
+      return [
+        ["a", `M${-r} 0A${r} ${r} 0 1 0 ${r} 0A${r} ${r} 0 1 0 ${-r} 0Z`],
+        ["i", `M${-ri} 0A${ri} ${ri} 0 1 0 ${ri} 0A${ri} ${ri} 0 1 0 ${-ri} 0Z`],
+      ];
+    },
   };
 
   /* ---------- the library ----------
@@ -121,6 +183,49 @@
       { t: "tear", n: 24, r0: 304, r1: 376, f: 0.9 },
       { t: "scallop", n: 32, r0: 376, r1: 436, f: 1 },
       { t: "dot", n: 32, r0: 436, r1: 470, off: 0.5, f: 0.6 },
+    ] },
+    // folk art: big leafy petals on a green star, onion-dome tiles with buds, sparkles between
+    { id: "folk", name: "folk art", rings: [
+      { t: "disc", r: 44 },
+      { t: "lotus", n: 8, r0: 44, r1: 300, off: 0.5, f: 0.98 },
+      { t: "folk", n: 8, r0: 44, r1: 284, f: 0.98, band: false },
+      { t: "dot", n: 16, r0: 300, r1: 326, off: 0.5, f: 0.4 },
+      { t: "ogee", n: 8, r0: 326, r1: 446, f: 0.9 },
+      { t: "sparkle", n: 8, r0: 346, r1: 426, off: 0.5, f: 0.4, band: false },
+      { t: "drop", n: 16, r0: 446, r1: 482, f: 0.36 },
+    ] },
+    // pichwai: orange lotuses and green vines, like a painted page
+    { id: "pichwai", name: "pichwai lotus", rings: [
+      { t: "disc", r: 34 },
+      { t: "bloom", n: 6, r0: 34, r1: 196, f: 0.95 },
+      { t: "dot", n: 12, r0: 196, r1: 224, off: 0.5, f: 0.55 },
+      { t: "sprig", n: 12, r0: 224, r1: 330, f: 0.9 },
+      { t: "bloom", n: 12, r0: 230, r1: 330, off: 0.5, f: 0.7, band: false },
+      { t: "bloom", n: 18, r0: 330, r1: 420, f: 0.98 },
+      { t: "scallop", n: 36, r0: 420, r1: 456, f: 1 },
+      { t: "dot", n: 36, r0: 456, r1: 480, off: 0.5, f: 0.6 },
+    ] },
+    // ink: a sunflower in the middle, then layer on layer of fine petals
+    { id: "ink", name: "ink sunflower", rings: [
+      { t: "disc", r: 36 },
+      { t: "petal", n: 24, r0: 36, r1: 140, f: 0.92 },
+      { t: "dot", n: 24, r0: 140, r1: 166, off: 0.5, f: 0.6 },
+      { t: "tear", n: 12, r0: 166, r1: 226, f: 0.7 },
+      { t: "dot", n: 12, r0: 172, r1: 206, off: 0.5, f: 0.4, band: false },
+      { t: "folk", n: 16, r0: 226, r1: 350, f: 0.98 },
+      { t: "lotus", n: 16, r0: 350, r1: 448, off: 0.5, f: 0.98 },
+      { t: "dot", n: 32, r0: 448, r1: 478, f: 0.5 },
+    ] },
+    // the colouring book: layered lotus petals and a border of little hoops
+    { id: "bloom", name: "colouring book", rings: [
+      { t: "disc", r: 66 },
+      { t: "dot", n: 12, r0: 66, r1: 96, f: 0.86 },
+      { t: "lotus", n: 8, r0: 96, r1: 214, f: 0.96 },
+      { t: "lotus", n: 8, r0: 96, r1: 190, off: 0.5, f: 0.7, band: false },
+      { t: "lotus", n: 8, r0: 214, r1: 336, off: 0.5, f: 0.98 },
+      { t: "tear", n: 8, r0: 236, r1: 330, f: 0.42, band: false },
+      { t: "petal", n: 16, r0: 336, r1: 402, f: 0.9 },
+      { t: "hoop", n: 30, r0: 410, r1: 478, f: 0.92 },
     ] },
     { id: "lotus", name: "lotus", rings: [
       { t: "disc", r: 40 },
@@ -799,6 +904,36 @@
     }, "image/png");
   }
 
+  /* ---------- painted mandalas: finished ones hung round the house as decoration ----------
+     <span class="painted-mandala" data-mandala="folk" data-story="folk"></span> anywhere in the
+     page gets that mandala, painted in that colour story, with a crayon edge. */
+  function paintHouse() {
+    const hosts = $$("[data-mandala]");
+    if (!hosts.length) return;
+    const defs = svgEl("svg", { width: "0", height: "0", "aria-hidden": "true", style: "position:absolute;width:0;height:0" });
+    defs.innerHTML =
+      '<defs><filter id="crayon" x="-5%" y="-5%" width="110%" height="110%">' +
+      '<feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="n"/>' +
+      '<feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G"/>' +
+      "</filter></defs>";
+    document.body.appendChild(defs);
+    hosts.forEach((host) => {
+      const m = MANDALAS.find((x) => x.id === host.dataset.mandala) || MANDALAS[0];
+      const st = STORIES.find((x) => x.id === host.dataset.story) || STORIES[0];
+      const svg = svgEl("svg", { viewBox: "-500 -500 1000 1000", "aria-hidden": "true", focusable: "false" });
+      const g = draw(m);
+      const fills = ringFillsToPieces(g, colourFrom(m, st, seeded(m.id + st.id)));
+      $$("path[data-id]", g).forEach((p) => {
+        const f = fills[p.dataset.id];
+        p.setAttribute("fill", !f || f === GOLD ? st.c[4] : f);
+      });
+      g.setAttribute("filter", "url(#crayon)");
+      g.setAttribute("stroke", host.dataset.line || "#3d4f63");
+      svg.appendChild(g);
+      host.appendChild(svg);
+    });
+  }
+
   window.DIDI_STUDIO = { MANDALAS, draw };
-  (window.DIDI_READY || Promise.resolve()).then(setupStudio);
+  (window.DIDI_READY || Promise.resolve()).then(() => { paintHouse(); setupStudio(); });
 })();

@@ -571,3 +571,11 @@ html.is-locked .walk-ui { opacity: 0; pointer-events: none; }
 /* a real plaster wall in the hallway, and a sunlit wall in the studio */
 .has-plaster .wall--plaster { --wall-tex: var(--img-plaster); --wall-tex-size: 640px; }
 .has-studioWall .wall--studio { --wall-tex: var(--img-studioWall); --wall-tex-size: cover; background-position: center; }
+
+/* painted mandalas hung round the house (drawn by studio.js) */
+.painted-mandala { display: block; pointer-events: none; }
+.painted-mandala svg { display: block; width: 100%; height: 100%; overflow: visible; animation: pm-turn 240s linear infinite; }
+.painted-mandala path { stroke-width: 3.2; stroke-linejoin: round; }
+.painted-mandala circle { fill: none; stroke-width: 3; }
+@keyframes pm-turn { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .painted-mandala svg { animation: none; } }
